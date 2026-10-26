@@ -91,6 +91,94 @@
       letter-spacing: 2px;
       color: #a19d90;
     }
+    
+/* GASKA'S PHONE */
+#phone-screen {
+  width: 100%;
+  max-width: 380px;
+  min-height: 680px;
+  margin: 0 auto;
+  padding: 30px 24px;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  position: relative;
+  overflow: hidden;
+  border: 7px solid #35372f;
+  border-radius: 38px;
+  background:
+    radial-gradient(
+      circle at 80% 20%,
+      #e1dfc9 0,
+      transparent 38%
+    ),
+    linear-gradient(
+      160deg,
+      #f5f1e7,
+      #e5e3d5 60%,
+      #d8d9c7
+    );
+  box-shadow: 0 20px 55px #38382b30;
+  color: #37392f;
+  font-family: Arial, sans-serif;
+}
+
+.phone-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  color: #55584a;
+}
+
+#phone-screen h2 {
+  margin: 48px 0 6px;
+  font-family: Georgia, serif;
+  font-size: 30px;
+  font-weight: normal;
+  letter-spacing: -1px;
+}
+
+#phone-screen h2::after {
+  content: "his little corner of the world";
+  display: block;
+  margin-top: 10px;
+  font-family: Arial, sans-serif;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: #858675;
+}
+
+.apps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px 12px;
+  margin-top: 42px;
+}
+
+.apps button {
+  min-height: 92px;
+  padding: 12px 4px;
+  border: 1px solid #ffffffa0;
+  border-radius: 20px;
+  background: #ffffff70;
+  box-shadow: 0 5px 14px #52523b10;
+  color: #555847;
+  font-size: 11px;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.apps button:hover {
+  background: #ffffffc9;
+  transform: translateY(-3px);
+}
+
+.apps button:active {
+  transform: scale(0.96);
+}
   </style>
 </head>
 
