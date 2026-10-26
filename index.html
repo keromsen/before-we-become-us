@@ -179,6 +179,61 @@
 .apps button:active {
   transform: scale(0.96);
 }
+   
+/* APP ICON DETAILS */
+.apps button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 100px;
+  padding: 12px 4px;
+  border: 1px solid #ffffffa0;
+  border-radius: 20px;
+  background: #ffffff70;
+  box-shadow: 0 5px 14px #52523b10;
+  color: #555847;
+  font-family: Arial, sans-serif;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.app-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: #dfe1d1;
+  color: #626852;
+  font-family: Georgia, serif;
+  font-size: 25px;
+}
+
+.app-name {
+  font-size: 11px;
+  letter-spacing: 0.2px;
+}
+
+#phone-screen {
+  position: relative;
+}
+
+#phone-screen::after {
+  content: "";
+  display: block;
+  width: 90px;
+  height: 4px;
+  margin: auto auto 0;
+  border-radius: 10px;
+  background: #74766580;
+}
+
+.phone-status {
+  font-variant-numeric: tabular-nums;
+} 
   </style>
 </head>
 
@@ -207,35 +262,68 @@
   document.querySelector(".intro").style.display = "none";
   document.getElementById("phone-screen").style.display = "flex";
     }
+    <script>
+  function openPhone() {
+    document.querySelector(".intro").style.display = "none";
+    document.getElementById("phone-screen").style.display = "flex";
+  }
+
+  function updatePhoneClock() {
+    const now = new Date();
+
+    document.getElementById("phone-time").textContent =
+      now.toLocaleTimeString("id-ID", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+      });
+
+    document.getElementById("phone-date").textContent =
+      now.toLocaleDateString("en-US", {
+        weekday: "short",
+        day: "numeric",
+        month: "short"
+      }).toUpperCase();
+  }
+
+  updatePhoneClock();
+  setInterval(updatePhoneClock, 10000);
+</script>
   </script>
   <div id="phone-screen" style="display: none;">
   <div class="phone-status">
-    <span>09:41</span>
-    <span>Tue, 27 May</span>
-  </div>
+  <span id="phone-time">09:41</span>
+  <span id="phone-date">TUE, 27 MAY</span>
+</div>
 
   <h2>Gaska's Phone</h2>
 
   <div class="apps">
     <button onclick="alert('Messages coming soon!')">
-      💬 Messages
+  <span class="app-icon">✉</span>
+  <span class="app-name">Messages</span>
     </button>
 
     <button onclick="alert('Notes coming soon!')">
-      📝 Notes
+  <span class="app-icon">✎</span>
+  <span class="app-name">Notes</span>
     </button>
 
     <button onclick="alert('Gallery coming soon!')">
-      🖼️ Gallery
-    </button>
+  <span class="app-icon">▧</span>
+  <span class="app-name">Gallery</span>
+</button>
 
     <button onclick="alert('Calendar coming soon!')">
-      📅 Calendar
-    </button>
+  <span class="app-icon">▦</span>
+  <span class="app-name">Calendar</span>
+</button>
 
     <button onclick="alert('Phone coming soon!')">
-      📞 Phone
+  <span class="app-icon">⌕</span>
+  <span class="app-name">Phone</span>
     </button>
+    
   </div>
 </div>
 </body>
