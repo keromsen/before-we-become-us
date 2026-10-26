@@ -116,8 +116,39 @@
 
   <script>
     function openPhone() {
-      alert("Gaska's phone is coming soon.");
+  document.querySelector(".intro").style.display = "none";
+  document.getElementById("phone-screen").style.display = "flex";
     }
   </script>
+  <div id="phone-screen" style="display: none;">
+  <div class="phone-status">
+    <span>09:41</span>
+    <span>Tue, 27 May</span>
+  </div>
+
+  <h2>Gaska's Phone</h2>
+
+  <div class="apps">
+    <button onclick="alert('Messages coming soon!')">
+      💬 Messages
+    </button>
+
+    <button onclick="alert('Notes coming soon!')">
+      📝 Notes
+    </button>
+
+    <button onclick="alert('Gallery coming soon!')">
+      🖼️ Gallery
+    </button>
+
+    <button onclick="alert('Calendar coming soon!')">
+      📅 Calendar
+    </button>
+
+    <button onclick="alert('Phone coming soon!')">
+      📞 Phone
+    </button>
+  </div>
+</div>
 </body>
   </html>
