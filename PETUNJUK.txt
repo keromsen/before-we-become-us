@@ -1,0 +1,9 @@
+HP SERA — Paket GitHub Pages
+
+Isi paket:
+- index.html: website HP Sera
+- sera_asset_*.jpg: wallpaper, foto chat, dan 29 foto galeri yang sebelumnya tertanam di HTML
+
+PENTING: unggah index.html dan SEMUA file sera_asset_*.jpg ke folder/root repository GitHub yang sama. Jangan hanya unggah index.html, karena foto akan tidak muncul.
+
+Untuk membuka website: aktifkan GitHub Pages dari Settings > Pages, pilih branch utama dan folder /(root).

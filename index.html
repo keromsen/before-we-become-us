@@ -1,0 +1,1242 @@
+<!--
+CODEPEN SETUP:
+Tempel seluruh file ini ke kolom HTML CodePen. CSS dan JavaScript sudah termasuk.
+-->
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#000000">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>HP Sera</title>
+<style>
+  :root{
+    --ink:#fff;
+    --ink-dim:rgba(255,255,255,.62);
+    --glass:rgba(255,255,255,.16);
+    --glass-strong:rgba(255,255,255,.28);
+    --notif:rgba(60,58,80,.55);
+    --danger:#ff453a;
+    --ease:cubic-bezier(.2,.8,.2,1);
+    --key:75px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;background:#000;color:var(--ink);overflow:hidden;
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue","Segoe UI",Roboto,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  svg{display:block}
+
+  /* ===== Bingkai iPhone ===== */
+  .stage{height:100%;display:flex;align-items:center;justify-content:center;background:#08080c}
+  .phone{position:relative;width:100%;height:100%;overflow:hidden;background:#000}
+  @media (min-width:600px){
+    .phone{width:393px;height:852px;max-height:96vh;border-radius:56px;
+      box-shadow:0 0 0 3px #3a3a42,0 0 0 11px #0c0c10,0 0 0 13px #2a2a32,0 40px 90px rgba(0,0,0,.75)}
+  }
+  @media (max-height:700px){ :root{--key:62px} }
+
+  /* ===== Wallpaper: gambar custom ===== */
+  .wall{position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat;}
+  /* Pantai malam untuk lockscreen */
+  #lock .wall{background-image:linear-gradient(rgba(0,0,0,.16),rgba(0,0,0,.20)),url("sera_asset_01.jpg");background-position:center center;}
+  /* Foto hitam-putih untuk Home Screen */
+  #home .wall{background-image:linear-gradient(rgba(0,0,0,.12),rgba(0,0,0,.18)),url("sera_asset_02.jpg");background-position:center center;}
+
+  /* ===== Dynamic Island & Status bar ===== */
+  .island{display:none;position:absolute;top:11px;left:50%;transform:translateX(-50%);
+    width:124px;height:36px;border-radius:20px;background:#000;z-index:60}
+  @media (min-width:600px){ .island{display:block} }
+  .statusbar{position:absolute;top:0;left:0;right:0;height:54px;z-index:55;pointer-events:none;
+    display:flex;justify-content:space-between;align-items:center;padding:14px 30px 0 44px;
+    font-size:17px;font-weight:600;letter-spacing:-.2px}
+  .statusbar .r{display:flex;align-items:center;gap:6px;font-size:15px}
+  .statusbar .r b{font-size:14px;font-weight:600}
+
+  .screen{position:absolute;inset:0}
+  .home-ind{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:138px;height:5px;
+    border-radius:3px;background:#fff;z-index:58;pointer-events:none;opacity:.95}
+
+  /* ===== Ikon aplikasi ===== */
+  .ico{border-radius:22.5%;overflow:hidden;flex:none}
+
+  /* ===== Lockscreen ===== */
+  #lock{z-index:30;touch-action:none;user-select:none;
+    transition:transform .65s var(--ease),opacity .45s}
+  #lock.unlocked{transform:translateY(-100%);opacity:0;pointer-events:none}
+  #lock .wall{filter:saturate(1.05)}
+  #lock::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.18);pointer-events:none;
+    transition:background .5s}
+  #lock.pin-mode::after{background:rgba(0,0,0,.45);backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px)}
+
+  .lock-main{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;cursor:pointer;
+    transition:opacity .35s,transform .45s var(--ease)}
+  #lock.pin-mode .lock-main{opacity:0;transform:scale(.94);pointer-events:none}
+
+  .lock-date{margin-top:72px;font-size:21px;font-weight:600;color:rgba(255,255,255,.78);letter-spacing:-.2px}
+  .lock-time{font-size:100px;font-weight:700;line-height:1;letter-spacing:-3px;margin-top:-2px;
+    color:rgba(255,255,255,.9);font-feature-settings:"tnum"}
+
+  .notifs{width:100%;padding:0 12px;margin-top:34px;display:flex;flex-direction:column;gap:8px}
+  .notif{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:22px;
+    background:var(--notif);backdrop-filter:blur(30px) saturate(1.6);-webkit-backdrop-filter:blur(30px) saturate(1.6);
+    opacity:0;transform:translateY(16px) scale(.97);animation:rise .6s var(--ease) forwards}
+  @keyframes rise{to{opacity:1;transform:none}}
+  .notif .ico{width:38px;height:38px}
+  .notif .tx{flex:1;min-width:0}
+  .notif .hd{display:flex;justify-content:space-between;gap:8px}
+  .notif .who{font-weight:600;font-size:15px}
+  .notif .when{font-size:13px;color:var(--ink-dim)}
+  .notif .msg{font-size:15px;line-height:1.3;color:rgba(255,255,255,.92);margin-top:1px}
+
+  .lock-btns{position:absolute;left:0;right:0;bottom:50px;display:flex;justify-content:space-between;padding:0 46px;z-index:3}
+  .lbtn{width:50px;height:50px;border-radius:50%;background:rgba(60,60,70,.45);
+    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;
+    transition:transform .15s,background .15s}
+  .lbtn:active{transform:scale(.9);background:rgba(255,255,255,.35)}
+  .swipe-hint{position:absolute;bottom:22px;left:0;right:0;text-align:center;font-size:13px;color:var(--ink-dim);
+    z-index:3;pointer-events:none;animation:pulse 2.4s infinite}
+  @keyframes pulse{50%{opacity:.4}}
+  #lock.pin-mode .lock-btns,#lock.pin-mode .swipe-hint{opacity:0;pointer-events:none}
+
+  /* ===== Layar kode sandi ===== */
+  .pin{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;
+    padding-top:78px;opacity:0;pointer-events:none;transform:translateY(24px);
+    transition:opacity .4s .08s,transform .45s var(--ease) .08s}
+  #lock.pin-mode .pin{opacity:1;pointer-events:auto;transform:none}
+  .pin-title{font-size:19px;font-weight:500;margin-top:14px}
+  .riddle{margin:12px 34px 0;text-align:center;font-size:15px;line-height:1.45;color:rgba(255,255,255,.85);font-style:italic}
+  .riddle small{display:block;font-style:normal;font-size:12px;letter-spacing:.5px;text-transform:uppercase;
+    color:var(--ink-dim);margin-bottom:4px}
+  .riddle-extra{margin:8px 34px 0;text-align:center;font-size:13px;color:#ffd479;min-height:18px}
+
+  .dots{display:flex;gap:18px;margin-top:20px}
+  .dot{width:13px;height:13px;border-radius:50%;border:1.5px solid #fff;transition:background .12s}
+  .dot.on{background:#fff}
+  .dots.shake{animation:shake .45s}
+  @keyframes shake{20%,60%{transform:translateX(-12px)}40%,80%{transform:translateX(12px)}}
+  .pin-msg{height:18px;margin-top:10px;font-size:13px;color:#ffb3ad}
+
+  .keypad{margin-top:14px;display:grid;grid-template-columns:repeat(3,var(--key));gap:14px 20px}
+  .key{width:var(--key);height:var(--key);border-radius:50%;background:var(--glass);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;transition:background .08s}
+  .key:active,.key.tap{background:var(--glass-strong)}
+  .key .n{font-size:34px;font-weight:300;line-height:1}
+  .key .l{font-size:10px;font-weight:600;letter-spacing:2px;margin-top:1px;height:11px;color:rgba(255,255,255,.9)}
+  .key.empty{visibility:hidden}
+  .pin-foot{width:calc(var(--key)*3 + 40px);display:flex;justify-content:space-between;margin-top:18px;font-size:16px}
+  .pin-foot button{padding:8px 4px}
+
+  /* ===== Home screen ===== */
+  #home{z-index:10;padding:68px 20px 0}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px 0;justify-items:center}
+  .app{display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;font-size:11.5px;
+    text-shadow:0 1px 3px rgba(0,0,0,.35)}
+  .app .ico{width:60px;height:60px;box-shadow:0 2px 8px rgba(0,0,0,.25);transition:transform .15s,filter .3s}
+  .app:active .ico{transform:scale(.9)}
+  .app.locked .ico{filter:grayscale(.85) brightness(.55)}
+  .app .lockmark{display:none;position:absolute;top:19px;left:50%;transform:translateX(-50%);
+    width:22px;height:22px;align-items:center;justify-content:center}
+  .app.locked .lockmark{display:flex}
+  .badge{position:absolute;top:-6px;right:-2px;min-width:22px;height:22px;border-radius:11px;background:#ff3b30;
+    font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;padding:0 6px;
+    box-shadow:0 0 0 0 transparent;text-shadow:none}
+
+  .search{position:absolute;left:50%;transform:translateX(-50%);bottom:124px;display:flex;align-items:center;gap:6px;
+    padding:7px 22px;border-radius:18px;background:rgba(255,255,255,.2);
+    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);font-size:13px}
+  .dock{position:absolute;left:11px;right:11px;bottom:20px;height:92px;border-radius:36px;
+    background:rgba(255,255,255,.2);backdrop-filter:blur(30px) saturate(1.5);-webkit-backdrop-filter:blur(30px) saturate(1.5);
+    display:flex;justify-content:space-around;align-items:center;padding:0 8px}
+  .dock .app .ico{width:60px;height:60px}
+
+  /* ===== Toast ===== */
+  .toast{position:absolute;left:50%;top:62px;transform:translate(-50%,-14px);z-index:70;
+    background:rgba(40,38,58,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    padding:10px 18px;border-radius:20px;font-size:14px;opacity:0;pointer-events:none;
+    transition:opacity .25s,transform .3s var(--ease);text-align:center;max-width:82%}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+
+  /* ===== Aplikasi Pesan ===== */
+  .app-window{position:absolute;inset:0;z-index:45;display:none;background:#f6f6fb;color:#17171b}
+  .app-window.show{display:flex;flex-direction:column;animation:appIn .28s ease-out}
+  @keyframes appIn{from{transform:translateY(18px);opacity:.5}to{transform:none;opacity:1}}
+  .msg-top{padding:58px 16px 12px;background:rgba(250,250,252,.94);backdrop-filter:blur(18px);border-bottom:1px solid #e6e6eb;display:flex;align-items:center;gap:10px}
+  .msg-back{background:none;border:0;color:#087cff;font-size:16px;min-width:64px;text-align:left;padding:6px 0}
+  .msg-person{flex:1;text-align:center;margin-right:64px}
+  .msg-avatar{width:38px;height:38px;margin:0 auto 4px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#ffb8d0,#9e9bff);color:white;font-weight:700}
+  .msg-person strong{display:block;font-size:14px}.msg-person small{font-size:11px;color:#777}
+  .msg-body{flex:1;overflow:auto;padding:18px 13px 12px;display:flex;flex-direction:column;gap:10px;background:#f7f7fb}
+  .msg-day{text-align:center;font-size:11px;color:#8b8b93;margin:2px 0 8px}
+  .bubble{box-sizing:border-box;width:fit-content;max-width:82%;padding:10px 13px;border-radius:19px;font-size:14px;line-height:1.35;white-space:pre-line;overflow-wrap:anywhere;box-shadow:0 1px 1px #00000008}
+  .bubble.sera{align-self:flex-end;background:#1685f8;color:white;border-bottom-right-radius:6px;max-width:78%}
+  .bubble.gaska{align-self:flex-start;background:#e5e5ea;color:#19191e;border-bottom-left-radius:6px;max-width:78%}
+  .msg-time{font-size:10px;opacity:.65;text-align:right;margin-top:4px}
+  .msg-choice-area{padding:12px 13px 28px;background:#fff;border-top:1px solid #e6e6eb}
+  .msg-prompt{font-size:12px;color:#777;margin-bottom:9px;text-align:center}
+  .msg-choice{display:block;width:100%;padding:12px 13px;margin-top:8px;border-radius:14px;background:#f0f4ff;color:#1769c2;text-align:left;font-size:13px;line-height:1.35;border:1px solid #dce8ff}
+  .msg-choice.secondary{background:#f6f6f8;color:#484850;border-color:#e8e8ec}
+  .msg-compose{display:flex;gap:8px;align-items:center;padding:9px 12px 12px;background:#fff;border-top:1px solid #e7e7eb;color:#999;font-size:12px}
+  .msg-compose span{border:1px solid #d9d9df;border-radius:18px;padding:8px 12px;flex:1}
+  .story-note{font-size:12px;color:#777;text-align:center;padding:5px 10px;font-style:italic}
+
+  /* Opening narrative before Sera's iPhone */
+  .intro-screen{position:absolute;inset:0;z-index:120;display:flex;flex-direction:column;justify-content:flex-end;padding:28px 23px 36px;background:
+    radial-gradient(ellipse at 75% 12%,rgba(232,185,178,.24),transparent 38%),
+    linear-gradient(180deg,rgba(14,15,25,.34),rgba(10,10,17,.88)),
+    url("sera_asset_03.jpg") center 25%/cover no-repeat,#191923;color:#fff;transition:opacity .35s ease,visibility .35s ease}
+  .intro-screen.hidden{opacity:0;visibility:hidden;pointer-events:none}
+  .intro-kicker{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#e8c6d7;margin-bottom:12px}
+  .intro-title{font-family:Georgia,serif;font-size:clamp(29px,8vw,38px);font-weight:400;line-height:1.08;margin-bottom:16px}
+  .intro-copy{font-size:13px;line-height:1.75;color:rgba(255,255,255,.88);max-height:42%;overflow:auto;margin-bottom:20px}
+  .intro-copy p+p{margin-top:10px}
+  .intro-continue{width:100%;border:1px solid rgba(255,255,255,.45);border-radius:16px;padding:14px;background:rgba(255,255,255,.15);color:#fff;font-weight:600;backdrop-filter:blur(15px)}
+  .intro-hint{text-align:center;font-size:10px;color:rgba(255,255,255,.62);margin-top:11px}
+  .msg-contact{display:flex;align-items:center;gap:10px;padding:11px 14px;background:#f8f8fb;border-bottom:1px solid #e7e7ec;color:#17171b}
+  .contact-avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#f2d0df,#a5b7ef);color:#fff;font-weight:700;font-size:17px}
+  .msg-photo{display:block;width:145px;max-width:100%;height:auto;max-height:180px;object-fit:cover;object-position:center;border-radius:12px;margin:7px 0 2px;border:1px solid #ffffff40}
+  .photo-caption{font-size:12px;line-height:1.4}
+
+
+.msg-inbox{display:none;position:absolute;inset:0;z-index:5;background:#fff;color:#17171b;overflow:auto}
+  .app-window.inbox-state .msg-inbox{display:block}
+  .app-window.inbox-state > .msg-top,.app-window.inbox-state > .msg-body,.app-window.inbox-state > .msg-choice-area,.app-window.inbox-state > .msg-compose{display:none}
+  .inbox-top{padding:58px 16px 13px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #ececf0;font-size:18px}
+  .inbox-search{margin:12px 15px;padding:8px 12px;background:#f0f0f5;border-radius:10px;color:#85858c;font-size:13px}
+  .inbox-row{display:flex;align-items:center;gap:11px;padding:12px 15px;min-height:74px;border-bottom:1px solid #ededf1;cursor:pointer}
+  .inbox-avatar{flex-shrink:0;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#f2c6dc,#c2b6f0);color:#fff;font-weight:700}
+  .inbox-avatar.gaska-avatar{background:linear-gradient(135deg,#d3d8e5,#8c9bb9)}
+  .inbox-avatar.alt{background:linear-gradient(135deg,#b7d8ef,#8795d6)}
+  .inbox-avatar.peach{background:linear-gradient(135deg,#f4c7ae,#e58e9d)}
+  .inbox-info{flex:1;min-width:0}
+  .inbox-name{font-size:14px;font-weight:650;display:flex;justify-content:space-between;gap:8px}
+  .inbox-name time{font-size:10px;font-weight:400;color:#8c8c93;white-space:nowrap}
+  .inbox-preview{font-size:12px;color:#898991;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .inbox-chevron{color:#c2c2c8;font-size:22px}
+  .app-window:not(.inbox-state) .msg-inbox{display:none}
+
+  /* ===== Telegram & banner notifikasi ===== */
+  .telegram-icon{background:#28a8e9}
+  .telegram-window{position:absolute;inset:0;z-index:46;display:none;background:#e9eff5;color:#17212b}
+  .telegram-window.show{display:flex;flex-direction:column;animation:appIn .28s ease-out}
+  .tg-top{padding:57px 15px 12px;background:#fff;display:flex;align-items:center;gap:11px;border-bottom:1px solid #dfe5eb}
+  .tg-back{color:#168acb;font-size:16px;min-width:60px;text-align:left}
+  .tg-avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#73d4f7,#2587d8);color:#fff;font-weight:700}
+  .tg-person{flex:1}
+  .tg-person strong{display:block;font-size:14px}
+  .tg-person small{font-size:11px;color:#7a8792}
+  .tg-body{flex:1;overflow:auto;padding:16px 12px 12px;display:flex;flex-direction:column;gap:9px;background:linear-gradient(#dce7ee,#e9eff5)}
+  .tg-day{text-align:center;align-self:center;background:#c8d8e2;color:#45606e;border-radius:12px;padding:4px 10px;font-size:10px;margin:3px 0 5px}
+  .tg-bubble{width:fit-content;max-width:84%;padding:10px 12px;border-radius:14px;background:#fff;color:#17212b;font-size:13px;line-height:1.4;box-shadow:0 1px 1px #0000000b;overflow-wrap:anywhere}
+  .tg-bubble.sera{align-self:flex-start;border-bottom-left-radius:4px}
+  .tg-bubble.gaska{align-self:flex-end;background:#d7f8c6;border-bottom-right-radius:4px}
+  .tg-note{font-size:11px;color:#526c79;text-align:center;padding:5px 10px}
+  .tg-choice-area{padding:12px 12px 27px;background:#fff;border-top:1px solid #dce4e9}
+  .tg-prompt{font-size:12px;color:#647784;text-align:center;margin-bottom:8px}
+  .tg-choice{display:block;width:100%;padding:12px 13px;margin-top:8px;border-radius:13px;background:#e4f4ff;color:#087eb7;text-align:left;font-size:13px;line-height:1.35;border:1px solid #c7e8fa}
+  .tg-choice.secondary{background:#f5f7f9;color:#4c5963;border-color:#e2e7eb}
+  .tg-compose{display:flex;align-items:center;padding:10px 13px 15px;background:#fff;color:#94a1ab;font-size:12px}
+  .tg-compose span{padding:9px 13px;border:1px solid #e1e6ea;border-radius:20px;flex:1}
+  .ios-banner{position:absolute;z-index:85;top:48px;left:12px;right:12px;display:flex;gap:10px;align-items:center;padding:12px;border-radius:19px;background:rgba(245,245,250,.94);color:#17171b;box-shadow:0 8px 30px #0003;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);opacity:0;transform:translateY(-18px);pointer-events:none;transition:opacity .28s,transform .3s var(--ease)}
+  .ios-banner.show{opacity:1;transform:translateY(0);pointer-events:auto}
+  .ios-banner .tg-mini{width:38px;height:38px;flex-shrink:0;border-radius:11px;background:#28a8e9;display:grid;place-items:center;color:white;font-weight:800;font-size:24px}
+  .ios-banner .banner-copy{min-width:0;flex:1}
+  .ios-banner .banner-head{display:flex;justify-content:space-between;gap:8px;font-size:12px;font-weight:700}
+  .ios-banner .banner-time{font-weight:400;color:#85858d}
+  .ios-banner .banner-text{font-size:13px;line-height:1.3;margin-top:3px}
+
+
+  .tg-inbox{display:flex;flex-direction:column;min-height:0;flex:1;background:#fff;color:#17212b}.tg-list-row{display:flex;align-items:center;gap:11px;padding:13px 15px;background:#fff;border-bottom:1px solid #e8edf0;cursor:pointer}.tg-list-row .tg-person{flex:1}.tg-list-row .tg-person strong{font-size:14px}.tg-list-row .tg-person small{display:block;color:#7a8792;font-size:12px;margin-top:4px}.tg-list-time{font-size:10px;color:#7a8792}.other-chat{cursor:pointer}.other-chat:active,.tg-list-row:active{background:#e9f5fc}
+
+
+  .preview-app{position:absolute;inset:0;z-index:47;display:none;flex-direction:column;background:#f7f7fb;color:#1c1c1e}
+  .preview-app.show{display:flex;animation:appIn .25s ease-out}
+  .preview-head{padding:55px 17px 13px;display:flex;align-items:center;gap:12px;background:#fff;border-bottom:1px solid #e5e5ea}
+  .preview-head button{border:0;background:none;color:#1685f8;font-size:15px}
+  .preview-title{font-size:17px;font-weight:700;flex:1;text-align:center;margin-right:50px}
+  .preview-content{padding:24px 20px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px}
+  .preview-big-icon{width:70px;height:70px;border-radius:18px;display:grid;place-items:center;background:#e8e8ed;font-size:32px}
+  .preview-content p{font-size:13px;line-height:1.5;color:#666;max-width:250px}
+  .preview-chip{font-size:11px;padding:7px 12px;background:#ececf2;border-radius:20px;color:#666}
+
+
+  /* Galeri Photos iPhone Sera */
+  .sera-gallery{display:none;flex:1;min-height:0;overflow:auto;background:#fff;padding:12px 9px 22px}
+  .sera-gallery.show{display:block}
+  .gallery-subtitle{font-size:12px;color:#777;margin:0 4px 12px}
+  .gallery-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px}
+  .gallery-thumb{aspect-ratio:1/1;border:0;padding:0;background:#f0f0f4;overflow:hidden;position:relative;cursor:pointer}
+  .gallery-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .gallery-thumb .gallery-fallback{display:none;position:absolute;inset:0;align-items:center;justify-content:center;text-align:center;padding:5px;font-size:10px;color:#777;background:#f0f0f4;overflow-wrap:anywhere}
+  .gallery-thumb img.bad-image{display:none}
+  .gallery-thumb img.bad-image + .gallery-fallback{display:flex}
+  .gallery-viewer{display:none;position:absolute;inset:0;z-index:60;background:rgba(0,0,0,.96);align-items:center;justify-content:center;flex-direction:column;padding:56px 12px 30px}
+  .gallery-viewer.show{display:flex}
+  .gallery-viewer img{max-width:100%;max-height:78%;object-fit:contain;transform:scale(1);transform-origin:center;touch-action:none;user-select:none;-webkit-user-drag:none}
+  .gallery-viewer button{position:absolute;top:48px;left:14px;border:0;border-radius:18px;padding:8px 13px;background:#292929;color:#fff;font-size:14px;z-index:2}
+  .gallery-viewer .gallery-nav{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:52px;border-radius:22px;background:#292929bb;color:white;font-size:28px;padding:0;display:grid;place-items:center}
+  .gallery-viewer #gallery-prev{left:8px}.gallery-viewer #gallery-next{right:8px}
+  .gallery-viewer small{color:#ddd;margin-top:12px}
+  .gallery-zoom-hint{position:absolute;bottom:58px;color:#bbb;font-size:11px;text-align:center;pointer-events:none}
+  .gallery-open .preview-content{display:none}
+  .gallery-open .sera-gallery{display:block}
+  .gallery-open .preview-title{margin-right:0}
+  .gallery-open .preview-head{padding-bottom:12px}
+  .tg-choice.secondary{background:var(--tg-choice-bg, #fff);color:var(--tg-choice-color, #1685f8);border-color:var(--tg-choice-border, #d7e3f0)}
+
+
+
+  /* ===== Polesan iPhone + pilihan jawaban yang seragam ===== */
+  .phone{isolation:isolate;background:#000;overscroll-behavior:none;}
+  @media (min-width:600px){
+    .stage{min-height:100dvh;padding:20px;background:radial-gradient(ellipse at center,#24242d 0%,#09090c 62%,#030304 100%)}
+    .phone{height:min(852px,94dvh);width:min(393px,94vw);border-radius:54px;border:1px solid #55555f;box-shadow:0 0 0 5px #111116,0 0 0 7px #41414a,0 28px 80px #000b;}
+  }
+  @media (max-width:599px){
+    .phone{height:100dvh;height:100%;width:100%;}
+  }
+  /* iMessage dan Telegram menggunakan desain pilihan yang sama persis */
+  .msg-choice-area,.tg-choice-area{padding:12px 13px max(26px,env(safe-area-inset-bottom));background:rgba(255,255,255,.97);border-top:1px solid #e5e5ea;}
+  .msg-prompt,.tg-prompt{font-size:12px;color:#777;text-align:center;margin:0 0 9px;line-height:1.4;}
+  .msg-choice,.tg-choice,
+  .msg-choice.secondary,.tg-choice.secondary{
+    appearance:none;-webkit-appearance:none;display:block;width:100%;min-height:44px;
+    padding:12px 14px;margin:8px 0 0;border-radius:14px;
+    background:#f0f4ff!important;color:#1769c2!important;
+    text-align:left;font-family:inherit;font-size:13px;font-weight:500;line-height:1.4;
+    border:1px solid #dce8ff!important;box-shadow:0 1px 2px #00000008;
+    transition:background .16s ease,transform .16s ease,border-color .16s ease;
+  }
+  .msg-choice:active,.tg-choice:active{transform:scale(.985);background:#e4ecff!important;}
+  .msg-choice:focus-visible,.tg-choice:focus-visible{outline:2px solid #1685f8;outline-offset:2px;}
+  .msg-compose,.tg-compose{padding-bottom:max(12px,env(safe-area-inset-bottom));}
+  /* Area layar mengikuti bentuk layar iPhone tanpa mengubah alur cerita */
+  .app-window,.telegram-window,.gallery-window,.notes-window,.calendar-window,.phone-window{overscroll-behavior:contain;}
+  button{-webkit-user-select:none;user-select:none;}
+
+
+  /* ===== Aplikasi iPhone yang terlihat nyata ===== */
+  .native-app-content{display:none;flex:1;min-height:0;overflow:auto;background:#f5f5fa;color:#17171b;padding:0 16px 24px;text-align:left}
+  .native-app-content.show{display:block}
+  .native-app-content *{box-sizing:border-box}
+  .native-status{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:700;padding:8px 3px 12px;color:#17171b}
+  .native-title{font-size:29px;line-height:1.1;font-weight:800;letter-spacing:-.8px;margin:8px 0 15px}
+  .native-subtitle{font-size:13px;color:#777;margin:-8px 0 15px}
+  .safari-search{display:flex;gap:7px;align-items:center;background:#e4e4eb;border-radius:13px;padding:10px 11px;margin:7px 0 14px}
+  .safari-search input{min-width:0;flex:1;border:0;outline:0;background:transparent;color:#222;font-size:14px}
+  .safari-search button{background:#fff;color:#1675df;border-radius:9px;padding:7px 10px;font-size:12px;font-weight:700}
+  .safari-start{background:white;border-radius:18px;padding:16px;margin-top:12px}
+  .safari-favorites{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:15px}
+  .safari-fav{text-align:center;font-size:11px;color:#444}
+  .safari-fav i{display:grid;place-items:center;width:44px;height:44px;border-radius:13px;background:#edf2ff;margin:0 auto 6px;font-style:normal;font-size:22px}
+  .music-screen{background:linear-gradient(160deg,#fff1f4,#f5f1ff 55%,#f7f7fa);margin:0 -16px;padding:0 16px 24px;min-height:100%}
+  .music-top{display:flex;align-items:center;justify-content:space-between;padding:7px 0 18px;font-size:12px;font-weight:700;color:#b02d59}
+  .music-feature{border-radius:20px;padding:17px;background:linear-gradient(140deg,#fa7797,#b746b5);color:white;box-shadow:0 10px 25px #c75d9233;margin-bottom:19px}
+  .music-feature h3{font-size:21px;margin-bottom:5px}.music-feature p{font-size:12px;opacity:.9;line-height:1.5}
+  .music-now{background:#fff;border-radius:17px;padding:12px;box-shadow:0 5px 18px #8a557014;margin:10px 0 18px}
+  .music-player{width:100%;aspect-ratio:16/9;border:0;border-radius:12px;background:#17171b;display:block;margin-bottom:10px}
+  .music-external-link{display:block;text-align:center;font-size:11px;color:#b02d59;text-decoration:none;padding:7px 4px 10px}
+  .music-now-title{font-weight:750;font-size:14px}.music-now-artist{font-size:12px;color:#777;margin-top:3px}
+  .music-section-label{font-size:17px;font-weight:800;margin:15px 0 10px}
+  .music-track{width:100%;display:flex;align-items:center;gap:11px;text-align:left;padding:9px 4px;border-bottom:1px solid #e7e3eb;color:#222}
+  .music-track.active{background:#fbe6ef;border-radius:12px;padding-left:8px}
+  .music-cover{width:43px;height:43px;flex:0 0 43px;border-radius:9px;display:grid;place-items:center;color:white;font-size:18px;background:linear-gradient(135deg,#f78da7,#7c69d7)}
+  .music-track-copy{flex:1;min-width:0}.music-track-name{font-size:13px;font-weight:700}.music-track-artist{font-size:11px;color:#777;margin-top:3px}.music-play{font-size:18px;color:#b02d59;padding:6px}
+  .notes-screen{margin:0 -16px;padding:0 16px 25px;background:#f5f5fa;min-height:100%}
+  .notes-group{font-size:12px;color:#8a8a91;font-weight:700;letter-spacing:.5px;margin:18px 2px 8px;text-transform:uppercase}
+  .note-card{background:#fff;border-radius:14px;padding:13px 14px;margin-bottom:9px;box-shadow:0 2px 5px #00000008}
+  .note-card h3{font-size:14px;margin-bottom:6px}.note-card p{font-size:12px;line-height:1.5;color:#666;white-space:pre-line}
+  .note-meta{font-size:10px;color:#aaa;margin-top:8px}
+  .letter-card{background:#fffaf0;border:1px solid #f0e6d1;border-radius:14px;padding:13px 14px;margin-bottom:9px;position:relative}
+  .letter-card h3{font-size:13px;margin-bottom:5px}.letter-card p{font-size:11px;line-height:1.45;color:#8d806e}
+  .letter-seal{float:right;font-size:20px;margin-left:8px}.letter-lock{font-size:10px;color:#a78d67;margin-top:8px;font-weight:700}
+  .preview-app.native-open .preview-content{display:none}
+  .preview-app.native-open .native-app-content.show{display:block}
+  .preview-app.native-open .sera-gallery{display:none}
+
+  .music-idle{aspect-ratio:16/9;background:#24202a;border-radius:12px;display:grid;place-items:center;color:#fff;font-size:38px;margin-bottom:10px}
+  .music-now-row{display:flex;align-items:center;gap:10px}
+  .music-now-copy{flex:1;min-width:0}
+  .music-toggle{display:none;flex:none;background:#b02d59;color:#fff;border-radius:999px;padding:8px 15px;font-size:12px;font-weight:700}
+  .music-toggle.show{display:block}
+  .note-open-card{cursor:pointer;transition:transform .15s}
+  .note-open-card:active{transform:scale(.985)}
+  .note-detail-back{border:0;background:#e5e5eb;border-radius:10px;padding:8px 12px;color:#1675df;font-weight:700;margin:4px 0 15px}
+  .note-detail-paper{background:#fff;border-radius:15px;padding:18px;min-height:180px;box-shadow:0 2px 8px #00008}
+
+  .native-homebar{height:4px;width:108px;background:#17171b;border-radius:9px;margin:12px auto 2px;opacity:.8}
+  .native-note-hint{font-size:10px;color:#9b9ba2;text-align:center;margin:12px 0}
+
+
+  /* ===== Gestur iPhone: Pusat Notifikasi & geser ke atas untuk Home ===== */
+  .nc-grab,.home-grab{position:absolute;left:0;right:0;z-index:52;touch-action:none;pointer-events:none}
+  .nc-grab{top:0;height:36px}
+  .home-grab{bottom:0;height:26px}
+  .phone.unlocked:not(.nc-open) .nc-grab,.phone.unlocked.app-open .home-grab,.phone.nc-open .home-grab{pointer-events:auto}
+  .home-ind{transition:background .25s}
+  .phone.app-open .home-ind{background:#17171b}
+  .phone.app-open.dark-app .home-ind,.phone.nc-open .home-ind{background:#fff}
+  .native-homebar{display:none}
+  .notif-center{position:absolute;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;padding-top:66px;
+    background:rgba(14,14,22,.5);backdrop-filter:blur(40px) saturate(1.5);-webkit-backdrop-filter:blur(40px) saturate(1.5);
+    transform:translateY(-100%);visibility:hidden;touch-action:none;user-select:none;
+    transition:transform .45s var(--ease),visibility 0s linear .45s}
+  .notif-center.open{transform:none;visibility:visible;transition:transform .45s var(--ease)}
+  .notif-center.dragging{visibility:visible;transition:none}
+  .nc-date{font-size:19px;font-weight:600;color:rgba(255,255,255,.78)}
+  .nc-time{font-size:76px;font-weight:700;line-height:1;letter-spacing:-2px;color:rgba(255,255,255,.92);font-feature-settings:"tnum"}
+  .nc-title{align-self:flex-start;margin:24px 22px 10px;font-size:22px;font-weight:700}
+  .nc-list{width:100%;padding:0 12px;display:flex;flex-direction:column;gap:8px}
+  .nc-item{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:22px;background:var(--notif);
+    backdrop-filter:blur(30px) saturate(1.6);-webkit-backdrop-filter:blur(30px) saturate(1.6);cursor:pointer;transition:background .15s}
+  .nc-item:active{background:rgba(110,108,140,.7)}
+  .nc-item .ico{width:38px;height:38px}
+  .nc-item .tx{flex:1;min-width:0}
+  .nc-item .hd{display:flex;justify-content:space-between;gap:8px}
+  .nc-item .who{font-weight:600;font-size:15px}
+  .nc-item .when{font-size:13px;color:var(--ink-dim)}
+  .nc-item .msg{font-size:15px;line-height:1.3;color:rgba(255,255,255,.92);margin-top:1px}
+  .nc-empty{text-align:center;color:var(--ink-dim);font-size:15px;padding:30px 0}
+  .nc-foot{margin-top:auto;margin-bottom:30px;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12px;color:var(--ink-dim)}
+  .nc-handle{width:46px;height:5px;border-radius:3px;background:rgba(255,255,255,.45)}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="phone" id="phone">
+
+    <section class="intro-screen" id="intro-screen" aria-label="Pembuka cerita">
+      <div class="intro-kicker">BEFORE WE BECAME US</div>
+      <h1 class="intro-title">Beberapa hal<br>yang tak pernah kita bilang.</h1>
+      <div class="intro-copy">
+        <p>Sera dan Gaska sudah berteman sejak lama. Mereka tumbuh dengan kebiasaan saling mencari, saling mengejek, dan saling mengingatkan hal-hal kecil. Sera tahu Gaska sering lupa makan kalau sedang sibuk; Gaska tahu Sera akan pura-pura tidak peduli, padahal selalu jadi orang pertama yang memastikan ia baik-baik saja.</p>
+        <p>Mereka berteman, saling mencari saat hari terasa berat, saling mengganggu tanpa perlu alasan. Kadang terlalu dekat untuk disebut teman biasa, tetapi selalu berhenti sebelum salah satu dari mereka bertanya: sebenarnya kita ini apa?</p>
+        <p>Pagi ini, sebelum mereka berpisah di sekolah, Sera menyodorkan ponselnya kepada Gaska. “Titip dulu, ya. Kalau aku belum balik, balikin nanti.” Ia mengatakannya sesantai menitipkan buku. Gaska menerimanya tanpa curiga—mereka sudah terlalu lama saling percaya untuk mempertanyakan hal sekecil itu.</p>
+        <p>Tak lama kemudian, sebuah pengingat muncul di layar. Dan untuk pertama kalinya, Gaska harus memutuskan apakah ia cukup berani membuka hal-hal yang selama ini hanya mereka simpan dalam diam.</p>
+      </div>
+      <button class="intro-continue" id="intro-continue">Lanjutkan <span aria-hidden="true">→</span></button>
+      <div class="intro-hint">ketuk untuk masuk ke iPhone Sera</div>
+    </section>
+
+
+    <div class="island"></div>
+    <div class="statusbar">
+      <span id="sb-time"></span>
+      <span class="r">
+        <svg width="18" height="12" viewBox="0 0 18 12" fill="#fff"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+        <b>5G</b>
+        <svg width="27" height="13" viewBox="0 0 27 13"><rect x=".5" y=".5" width="22" height="12" rx="3.5" fill="none" stroke="#fff" opacity=".4"/><rect x="2" y="2" width="16" height="9" rx="2.2" fill="#fff"/><path d="M24.5 4.5v4c.8-.3 1.5-1.1 1.5-2s-.7-1.7-1.5-2z" fill="#fff" opacity=".45"/></svg>
+      </span>
+    </div>
+
+    <!-- HOME -->
+    <section class="screen" id="home" aria-label="Home screen">
+      <div class="wall"></div>
+      <div class="grid" id="grid" style="position:relative"></div>
+      <div class="search"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><circle cx="10" cy="10" r="6.5"/><path d="M15 15l6 6"/></svg>Cari</div>
+      <div class="dock" id="dock"></div>
+    </section>
+
+    <!-- LOCKSCREEN + KODE SANDI -->
+    <section class="screen" id="lock" aria-label="Lockscreen">
+      <div class="wall"></div>
+
+      <div class="lock-main" id="lock-main">
+        <div class="lock-date" id="lock-date"></div>
+        <div class="lock-time" id="lock-time"></div>
+        <div class="notifs" id="notifs"></div>
+      </div>
+
+      <div class="lock-btns">
+        <button class="lbtn" id="btn-flash" aria-label="Senter">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M8 2h8v4l-1.5 2.2v1.3h-5V8.2L8 6zM9.5 11h5v10a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2z"/></svg>
+        </button>
+        <button class="lbtn" id="btn-cam" aria-label="Kamera">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M3 8a2 2 0 0 1 2-2h2l1.5-2h7L17 6h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.8"/></svg>
+        </button>
+      </div>
+      <div class="swipe-hint">Geser ke atas untuk membuka</div>
+
+      <div class="pin" id="pin">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2.5" fill="#fff"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+        <div class="pin-title">Masukkan Kode Sandi</div>
+        <p class="riddle"><small>Dari Sera</small><span id="riddle"></span></p>
+        <p class="riddle-extra" id="riddle-extra"></p>
+        <div class="dots" id="dots"></div>
+        <div class="pin-msg" id="pin-msg"></div>
+        <div class="keypad" id="keypad"></div>
+        <div class="pin-foot">
+          <button id="pin-emerg">Darurat</button>
+          <button id="pin-cancel">Batal</button>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="app-window" id="pesan-window" aria-label="Pesan dengan Sera">
+      <section class="msg-inbox" id="msg-inbox">
+        <header class="inbox-top">
+          <button class="msg-back" id="inbox-back">‹ Kembali</button>
+          <strong>Pesan</strong>
+          <span style="width:64px"></span>
+        </header>
+        <div class="inbox-search">⌕　Cari</div>
+        <div class="inbox-row" id="open-gaska-chat">
+          <div class="inbox-avatar gaska-avatar">G</div>
+          <div class="inbox-info"><div class="inbox-name">Gaska <time>07.41</time></div><div class="inbox-preview">udah aku pegang. nanti aku balikin</div></div>
+          <span class="inbox-chevron">›</span>
+        </div>
+        <div class="inbox-row other-chat" data-contact="Kirana">
+          <div class="inbox-avatar">K</div>
+          <div class="inbox-info"><div class="inbox-name">Kirana <time>Kemarin</time></div><div class="inbox-preview">Sera, jadi ikut makan di kantin kampus nggak?</div></div><span class="inbox-chevron">›</span>
+        </div>
+        <div class="inbox-row other-chat" data-contact="Grup Angkatan">
+          <div class="inbox-avatar alt">A</div>
+          <div class="inbox-info"><div class="inbox-name">Grup Angkatan <time>Senin</time></div><div class="inbox-preview">Rafi: presentasi kelompok besok jam 9 yaa</div></div><span class="inbox-chevron">›</span>
+        </div>
+        <div class="inbox-row other-chat" data-contact="Mama">
+          <div class="inbox-avatar peach">M</div>
+          <div class="inbox-info"><div class="inbox-name">Mama <time>Minggu</time></div><div class="inbox-preview">jangan pulang terlalu sore, Ser</div></div><span class="inbox-chevron">›</span>
+        </div>
+      </section>
+      
+      <header class="msg-top">
+        <button class="msg-back" id="pesan-back">‹ Kembali</button>
+        <div class="msg-person">
+          <div class="msg-avatar">G</div>
+          <strong>Gaska</strong>
+          <small>iMessage · terakhir aktif baru saja</small>
+        </div>
+      </header>
+      <div class="msg-body" id="msg-body">
+        <div class="msg-day">iMessage · 4 September 2023</div>
+        <div class="bubble sera">Gaska, kamu udah makan?</div>
+        <div class="bubble gaska">baru mau. kok nanya kayak ibu-ibu sih</div>
+        <div class="bubble sera">yaudah nggak usah makan 🙄</div>
+        <div class="bubble gaska">LAH jangan marah wkwk</div>
+        <div class="bubble sera">makan dulu sana. nanti maag kamu kambuh lagi</div>
+        <div class="msg-day">iMessage · 17 Januari 2024</div>
+        <div class="bubble gaska">Sera, deadline makalahnya hari ini apa besok?</div>
+        <div class="bubble sera">hari ini, Gaska. aku udah bilang dari kemarin 😭</div>
+        <div class="bubble gaska">aku mengandalkan ingatanmu</div>
+        <div class="bubble sera">alasan. sini aku kirim rangkumannya</div>
+        <div class="msg-day">iMessage · 9 Mei 2025</div>
+        <div class="bubble sera">eh tadi kamu sadar nggak aku foto kamu?</div>
+        <div class="bubble gaska">HAH kapan??</div>
+        <div class="bubble sera">pas kamu lagi fokus cerita. lucu aja mukamu serius banget</div>
+        <div class="bubble gaska">kirim sini. aku mau lihat sejelek apa</div>
+        <div class="bubble sera">nih dua-duanya. jangan protes ya 😭<br><img class="msg-photo" src="sera_asset_04.jpg" alt="Foto Gaska yang diam-diam diambil Sera"><div class="photo-caption">aku nggak sengaja kok (bohong)</div><img class="msg-photo" src="sera_asset_03.jpg" alt="Foto kedua Gaska yang dikirim Sera"><div class="photo-caption">nih satu lagi. jangan protes 😭</div></div>
+        <div class="bubble gaska">SERA INI KATANYA NGGAK SENGAJA 😭😭</div>
+        <div class="bubble gaska">kok ada dua 😭 kamu motret aku berapa kali sih</div>
+        <div class="bubble sera">ya kan hasilnya bagus. simpan aja dua-duanya</div>
+        <div class="bubble gaska">udah aku simpan. jangan geer</div>
+        <div class="bubble sera">siapa juga yang geer, Pak Gaska</div>
+        <div class="msg-day">iMessage · 21 Oktober, 20.46</div>
+        <div class="bubble gaska">besok hp kamu aku bawa, kan?</div>
+        <div class="bubble sera">iyaa. kalau aku lupa ngambil, ingetin aja</div>
+        <div class="bubble gaska">oke. aman sama aku</div>
+        <div class="bubble sera">aku tahu kok :)</div>
+        <div class="msg-day">Hari ini · 07.42</div>
+        <div class="story-note">Pengingat baru dari Sera muncul di layar terkunci.</div>
+      </div>
+      <div class="msg-compose"><span>iMessage</span><b style="color:#1685f8;font-size:20px">↑</b></div>
+    </section>
+
+
+    <section class="telegram-window" id="telegram-window" aria-label="Telegram">
+      <section class="tg-inbox" id="tg-inbox">
+        <header class="tg-top"><button class="tg-back" id="tg-home-back">‹ Home</button><div class="tg-person"><strong>Telegram</strong><small>Pesan</small></div></header>
+        <div class="tg-list-row" id="open-sera-telegram" role="button" tabindex="0">
+          <div class="tg-avatar">S</div><div class="tg-person"><strong>Find me bro</strong><small>kalau sudah, chat aku disini yaa</small></div><small class="tg-list-time">sekarang</small>
+        </div>
+      </section>
+      <section class="tg-chat" id="tg-chat" style="display:none;flex:1;min-height:0;flex-direction:column">
+        <header class="tg-top"><button class="tg-back" id="tg-back">‹ Kembali</button><div class="tg-avatar">S</div><div class="tg-person"><strong>Find me bro</strong><small>last seen recently</small></div></header>
+        <div class="tg-body" id="tg-body">
+          <div class="tg-day">Hari ini · 07.42</div>
+          <div class="tg-bubble sera">akhirnya dibuka juga 😭</div>
+          <div class="tg-bubble sera">kalau sudah, chat aku disini yaa</div>
+          <div class="tg-bubble sera">aku punya permainan kecil buat kamu.</div>
+          <div class="tg-bubble sera">kalau kamu mau nemuin aku, ikutin petunjuk yang aku tinggalin. jangan curang ya, Gaska.</div>
+        </div>
+        <div class="tg-choice-area" id="tg-choice-area">
+          <div class="tg-prompt">Apa yang akan Gaska lakukan?</div>
+          <button class="tg-choice" data-tg-choice="reply">“aku udah buka. kamu di mana, Sera?”</button>
+          <button class="tg-choice secondary" data-tg-choice="silent">“kenapa harus pake teka-teki segala?”</button>
+        </div>
+        <div class="tg-compose"><span>Pesan</span></div>
+      </section>
+    </section>
+    <div class="ios-banner" id="telegram-banner" role="button" tabindex="0" aria-label="Notifikasi Telegram dari Sera">
+      <div class="tg-mini">➤</div>
+      <div class="banner-copy"><div class="banner-head"><span>Telegram · Sera</span><span class="banner-time">sekarang</span></div><div class="banner-text">kalau sudah, chat aku disini yaa</div></div>
+    </div>
+
+    <section class="preview-app" id="preview-app"><header class="preview-head"><button id="preview-back">‹ Home</button><div class="preview-title" id="preview-title">Aplikasi</div></header><div class="preview-content"><div class="preview-big-icon" id="preview-icon">📱</div><strong id="preview-heading">Aplikasi Sera</strong><p id="preview-description">Bagian ini akan digunakan saat alur cerita membawamu ke sini.</p><span class="preview-chip">Pratinjau · belum waktunya digunakan</span></div><div class="native-app-content" id="native-app-content"></div><div class="native-app-content" id="music-app-content"></div><div class="sera-gallery" id="sera-gallery"><p class="gallery-subtitle">Semua Foto · 24 item</p><div class="gallery-grid" id="gallery-grid"></div></div><div class="gallery-viewer" id="gallery-viewer"><button id="gallery-viewer-close">‹ Kembali</button><button class="gallery-nav" id="gallery-prev" aria-label="Foto sebelumnya">‹</button><img id="gallery-viewer-image" alt="Foto dari galeri Sera"><button class="gallery-nav" id="gallery-next" aria-label="Foto berikutnya">›</button><small id="gallery-viewer-caption"></small><div class="gallery-zoom-hint">Geser untuk pindah foto · Cubit atau ketuk dua kali untuk zoom</div></div></section>
+    <section class="notif-center" id="notif-center" aria-label="Pusat Notifikasi" aria-hidden="true">
+      <div class="nc-date" id="nc-date"></div>
+      <div class="nc-time" id="nc-time"></div>
+      <div class="nc-title">Notifikasi</div>
+      <div class="nc-list" id="nc-list"></div>
+      <div class="nc-foot"><div class="nc-handle"></div><span>Geser ke atas untuk menutup</span></div>
+    </section>
+    <div class="nc-grab" id="nc-grab"></div>
+    <div class="home-grab" id="home-grab"></div>
+    <div class="home-ind"></div>
+    <div class="toast" id="toast"></div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   CONFIG — ubah bagian ini untuk menyesuaikan ceritamu
+   (nanti dipindah penuh ke story.json)
+   ========================================================= */
+const CONFIG = {
+  time: "07:42",
+  date: "Kamis, 22 Oktober",
+
+  lockNotifications: [
+    { app: "catatan", who: "Pengingat", msg: "Gaska, sebelum kembaliin hp aku, buka aja kamu pasti tau sandinya", when: "semalam", delay: 400 },
+    { app: "catatan", who: "Pengingat", msg: "jangan lupa hari ini", when: "5 mnt lalu", delay: 1100 }
+  ],
+
+  pin: {
+    code: "2709",
+    riddle: "Tanggal pertama kali kita bertemu.",
+    extraHints: [
+      { after: 2, text: "Petunjuk: empat angka, tanggal lalu bulan." },
+      { after: 4, text: "Petunjuk: tanggalnya dua digit, bulannya September." }
+    ]
+  },
+
+  apps: [
+    { id: "pesan",   name: "Pesan",   locked: false, badge: 2 },
+    { id: "telegram",name: "Telegram",locked: false, badge: 1 },
+    { id: "galeri",  name: "Foto",    locked: false },
+    { id: "catatan", name: "Catatan", locked: false },
+    { id: "musik",   name: "Musik",   locked: false },
+    { id: "peta",    name: "Peta",    locked: false }
+  ],
+  dock: [
+    { id: "telepon",    name: "Telepon" },
+    { id: "safari",     name: "Safari" },
+    { id: "kamera",     name: "Kamera" },
+    { id: "pengaturan", name: "Pengaturan" }
+  ]
+};
+
+/* =========================================================
+   Ikon bergaya iOS (SVG)
+   ========================================================= */
+const ICONS = {
+  telegram: `<svg viewBox="0 0 60 60"><rect width="60" height="60" rx="13" fill="#28a8e9"/><path d="M47 14L40 47c-.5 2.3-1.8 2.8-3.7 1.7L25.5 41l-5.2 5c-.6.6-1.1 1.1-2.2 1.1l.8-11.3L39.5 17c.9-.8-.2-1.2-1.4-.4L12.4 32.7 1.5 29.3c-2.4-.8-2.4-2.4.5-3.5L44.7 9.4c2-.7 3.7.5 2.3 4.6z" fill="#fff" transform="translate(5 3) scale(.85)"/></svg>`,
+  pesan: `<svg viewBox="0 0 60 60"><defs><linearGradient id="gp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#67f07f"/><stop offset="1" stop-color="#0db83e"/></linearGradient></defs><rect width="60" height="60" fill="url(#gp)"/><ellipse cx="30" cy="28" rx="17" ry="14" fill="#fff"/><path d="M17 40c-.5 4-3 7-6 8.5 6 .5 11-1.5 14-4.5z" fill="#fff"/></svg>`,
+  galeri: `<svg viewBox="0 0 60 60"><rect width="60" height="60" fill="#fff"/><g transform="translate(30 30)" style="mix-blend-mode:multiply"><ellipse cy="-10" rx="6" ry="10" fill="#ffd23c" transform="rotate(0)"/><ellipse cy="-10" rx="6" ry="10" fill="#ff9f2e" transform="rotate(45)"/><ellipse cy="-10" rx="6" ry="10" fill="#ff5a5a" transform="rotate(90)"/><ellipse cy="-10" rx="6" ry="10" fill="#e84fa8" transform="rotate(135)"/><ellipse cy="-10" rx="6" ry="10" fill="#a45cf0" transform="rotate(180)"/><ellipse cy="-10" rx="6" ry="10" fill="#4f8bff" transform="rotate(225)"/><ellipse cy="-10" rx="6" ry="10" fill="#34c9d8" transform="rotate(270)"/><ellipse cy="-10" rx="6" ry="10" fill="#5fd35f" transform="rotate(315)"/></g></svg>`,
+  catatan: `<svg viewBox="0 0 60 60"><rect width="60" height="60" fill="#fff"/><rect width="60" height="17" fill="#ffd60a"/><g stroke="#d5d5da" stroke-width="1.5"><path d="M0 28h60M0 38h60M0 48h60"/></g><path d="M12 8h22" stroke="#b08a00" stroke-width="2" stroke-linecap="round" opacity=".5"/></svg>`,
+  musik: `<svg viewBox="0 0 60 60"><defs><linearGradient id="gm" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff6a85"/><stop offset="1" stop-color="#f6213a"/></linearGradient></defs><rect width="60" height="60" fill="url(#gm)"/><path d="M24 40V20l17-4v20" stroke="#fff" stroke-width="3.2" fill="none" stroke-linejoin="round"/><ellipse cx="20.5" cy="41" rx="5.5" ry="4.2" fill="#fff"/><ellipse cx="37.5" cy="37" rx="5.5" ry="4.2" fill="#fff"/></svg>`,
+  peta: `<svg viewBox="0 0 60 60"><rect width="60" height="60" fill="#8fd7a0"/><path d="M0 0h60v26L0 40z" fill="#9bd8ff"/><path d="M-4 52L64 18" stroke="#fff" stroke-width="7"/><path d="M14 60l14-60" stroke="#fff" stroke-width="3" opacity=".8"/><path d="M30 14c-6 0-10 4.4-10 9.6C20 30 30 40 30 40s10-10 10-16.4C40 18.4 36 14 30 14z" fill="#ff3b30"/><circle cx="30" cy="23.5" r="3.6" fill="#fff"/></svg>`,
+  telepon: `<svg viewBox="0 0 60 60"><defs><linearGradient id="gt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#67f07f"/><stop offset="1" stop-color="#0db83e"/></linearGradient></defs><rect width="60" height="60" fill="url(#gt)"/><path d="M21 16c-3 1.5-4 4-3 8 3 10 11 18 22 22 4 1.4 6.5-.5 7-3l-1-4-7-2.5-3 3.5c-4-2-7.5-5.5-9.5-9.5l3.5-3-2.5-7z" fill="#fff"/></svg>`,
+  safari: `<svg viewBox="0 0 60 60"><defs><linearGradient id="gs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5ac8ff"/><stop offset="1" stop-color="#1a6dff"/></linearGradient></defs><rect width="60" height="60" fill="url(#gs)"/><circle cx="30" cy="30" r="21" fill="none" stroke="#fff" stroke-width="2.5"/><path d="M40 20L33 33 20 40l7-13z" fill="#ff3b30"/><path d="M40 20L33 33 27 27z" fill="#fff"/></svg>`,
+  kamera: `<svg viewBox="0 0 60 60"><defs><linearGradient id="gk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9b9c2"/><stop offset="1" stop-color="#6c6c76"/></linearGradient></defs><rect width="60" height="60" fill="url(#gk)"/><path d="M12 22a4 4 0 0 1 4-4h4l3-4h14l3 4h4a4 4 0 0 1 4 4v18a4 4 0 0 1-4 4H16a4 4 0 0 1-4-4z" fill="#fff" opacity=".95"/><circle cx="30" cy="31" r="8.5" fill="#55555f"/><circle cx="30" cy="31" r="5" fill="#2a2a32"/></svg>`,
+  pengaturan: `<svg viewBox="0 0 60 60"><defs><linearGradient id="gg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9b9c2"/><stop offset="1" stop-color="#6c6c76"/></linearGradient></defs><rect width="60" height="60" fill="url(#gg)"/><circle cx="30" cy="30" r="15.5" fill="none" stroke="#fff" stroke-width="7" stroke-dasharray="6.1 6.1"/><circle cx="30" cy="30" r="12" fill="#e8e8ee"/><circle cx="30" cy="30" r="5.5" fill="#7a7a84"/></svg>`
+};
+const iconEl = (id,size)=>{
+  const d = document.createElement("div");
+  d.className = "ico"; d.innerHTML = ICONS[id] || "";
+  if(size){ d.style.width = d.style.height = size+"px"; }
+  return d;
+};
+
+/* =========================================================
+   Util
+   ========================================================= */
+const $ = id => document.getElementById(id);
+const lock = $("lock");
+
+function toast(text){
+  const t = $("toast");
+  t.textContent = text;
+  t.classList.add("show");
+  clearTimeout(toast._t);
+  toast._t = setTimeout(()=>t.classList.remove("show"), 2300);
+}
+function buzz(p){ if(navigator.vibrate) navigator.vibrate(p); }
+
+/* =========================================================
+   Isi tampilan awal
+   ========================================================= */
+$("sb-time").textContent   = CONFIG.time;
+$("lock-time").textContent = CONFIG.time;
+$("lock-date").textContent = CONFIG.date;
+$("riddle").textContent    = "“" + CONFIG.pin.riddle + "”";
+
+const APP_NAMES = Object.fromEntries([...CONFIG.apps,...CONFIG.dock].map(a=>[a.id,a.name]));
+CONFIG.lockNotifications.forEach(n=>{
+  const el = document.createElement("div");
+  el.className = "notif";
+  el.style.animationDelay = n.delay + "ms";
+  el.appendChild(iconEl(n.app));
+  const tx = document.createElement("div");
+  tx.className = "tx";
+  tx.innerHTML = `<div class="hd"><span class="who">${n.who}</span><span class="when">${n.when}</span></div>
+                  <div class="msg">${n.msg}</div>`;
+  el.appendChild(tx);
+  $("notifs").appendChild(el);
+});
+
+$("btn-flash").addEventListener("click", e=>{ e.stopPropagation(); toast("Senter tidak tersedia"); });
+$("btn-cam").addEventListener("click",   e=>{ e.stopPropagation(); toast("Kamera tidak tersedia"); });
+
+/* =========================================================
+   Lockscreen -> kode sandi
+   ========================================================= */
+let startY = null;
+const inPin = () => lock.classList.contains("pin-mode");
+function enterPin(){ if(!inPin()) lock.classList.add("pin-mode"); }
+function leavePin(){ lock.classList.remove("pin-mode"); clearEntry(); }
+
+$("lock-main").addEventListener("click", enterPin);
+lock.addEventListener("pointerdown", e => startY = e.clientY);
+lock.addEventListener("pointerup", e => {
+  if(startY !== null && startY - e.clientY > 60 && !inPin()) enterPin();
+  startY = null;
+});
+$("pin-emerg").addEventListener("click", ()=>toast("Panggilan darurat tidak tersedia di sini"));
+$("pin-cancel").addEventListener("click", ()=>{ entry.length ? del() : leavePin(); });
+
+/* =========================================================
+   Papan angka
+   ========================================================= */
+const LEN = CONFIG.pin.code.length;
+let entry = "", wrongCount = 0, busy = false;
+
+for(let i=0;i<LEN;i++){ const d=document.createElement("div"); d.className="dot"; $("dots").appendChild(d); }
+
+const LETTERS = {2:"ABC",3:"DEF",4:"GHI",5:"JKL",6:"MNO",7:"PQRS",8:"TUV",9:"WXYZ"};
+["1","2","3","4","5","6","7","8","9","","0",""].forEach(k=>{
+  const b = document.createElement("button");
+  if(k===""){ b.className="key empty"; b.disabled=true; }
+  else{
+    b.className="key"; b.dataset.k=k;
+    b.innerHTML = `<span class="n">${k}</span><span class="l">${LETTERS[k]||""}</span>`;
+  }
+  $("keypad").appendChild(b);
+});
+$("keypad").addEventListener("click", e=>{
+  const k = e.target.closest("button")?.dataset.k;
+  if(k) press(k);
+});
+document.addEventListener("keydown", e=>{
+  if(!inPin() || lock.classList.contains("unlocked")) return;
+  if(/^\d$/.test(e.key)) press(e.key);
+  else if(e.key==="Backspace") del();
+  else if(e.key==="Escape") leavePin();
+});
+
+function renderDots(){
+  [...$("dots").children].forEach((d,i)=>d.classList.toggle("on", i<entry.length));
+  $("pin-cancel").textContent = entry.length ? "Hapus" : "Batal";
+}
+function clearEntry(){ entry=""; renderDots(); $("pin-msg").textContent=""; }
+function del(){ if(busy) return; entry = entry.slice(0,-1); renderDots(); }
+
+function press(d){
+  if(busy || entry.length>=LEN) return;
+  entry += d; renderDots(); buzz(8);
+  if(entry.length===LEN) check();
+}
+function check(){
+  busy = true;
+  setTimeout(()=>{
+    if(entry === CONFIG.pin.code){
+      buzz(30); lock.classList.add("unlocked"); $("phone").classList.add("unlocked"); busy = false;
+      scheduleTelegramNotification();
+      if ("Notification" in window && Notification.permission === "default") { try { Notification.requestPermission(); } catch(e) {} }
+      return;
+    }
+    wrongCount++;
+    $("dots").classList.add("shake");
+    $("pin-msg").textContent = "Kode sandi salah. Coba ingat lagi.";
+    buzz([40,40,40]);
+    const hint = [...CONFIG.pin.extraHints].reverse().find(h=>wrongCount>=h.after);
+    if(hint) $("riddle-extra").textContent = hint.text;
+    setTimeout(()=>{ $("dots").classList.remove("shake"); clearEntry(); busy=false; }, 520);
+  }, 160);
+}
+
+/* =========================================================
+   Home screen
+   ========================================================= */
+function makeApp(a){
+  const el = document.createElement("button");
+  el.className = "app" + (a.locked?" locked":"");
+  el.dataset.id = a.id;
+  el.appendChild(iconEl(a.id, 60));
+  const lab = document.createElement("span"); lab.textContent = a.name; el.appendChild(lab);
+  el.insertAdjacentHTML("beforeend",
+    `<div class="lockmark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2.5" fill="#fff"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>`);
+  if(a.badge) el.insertAdjacentHTML("beforeend", `<div class="badge">${a.badge}</div>`);
+  el.addEventListener("click", ()=>openApp(a, el));
+  return el;
+}
+CONFIG.apps.forEach(a=>$("grid").appendChild(makeApp(a)));
+CONFIG.dock.forEach(a=>{ const el = makeApp(a); el.querySelector("span").style.display="none"; $("dock").appendChild(el); });
+
+function openApp(a, el){
+  if(a.dead){ /* aplikasi simulasi tetap dapat dibuka */ }
+  if(a.locked){ toast(`${a.name} belum tersedia di alur cerita ini.`); buzz(20); return; }
+  el.querySelector(".badge")?.remove();
+  // Langkah 3: buka aplikasi sungguhan di sini
+  if(a.id === "pesan"){
+    $("pesan-window").classList.add("show", "inbox-state");
+    $("msg-body").scrollTop = 0;
+    return;
+  }
+  if(a.id === "telegram"){
+    $("telegram-window").classList.add("show");
+    $("tg-inbox").style.display = "flex";
+    $("tg-chat").style.display = "none";
+    $("telegram-banner").classList.remove("show");
+    return;
+  }
+  showPreviewApp(a);
+}
+
+const previewDescriptions={galeri:"Foto-foto Sera tersimpan di sini. Petunjuknya akan terbuka saat permainan mengarahkan Gaska ke Galeri.",catatan:"Catatan pribadi Sera. Isinya belum bisa dibaca sebelum petunjuk sebelumnya ditemukan.",musik:"Playlist milik Sera menyimpan petunjuk berikutnya. Tunggu sampai urutan cerita membawamu ke sini.",peta:"Lokasi-lokasi tersimpan akan membantu Gaska menemukan Sera. Peta belum bisa digunakan di luar urutan permainan.",telepon:"Riwayat panggilan belum tersedia.",safari:"Safari belum digunakan dalam cerita ini.",kamera:"Kamera tidak bisa digunakan saat ini.",pengaturan:"Pengaturan perangkat Sera."};
+const seraPhotos = [
+ {title:`Foto 01`,src:'sera_asset_05.jpg'},
+ {title:`Foto 02`,src:'sera_asset_04.jpg'},
+ {title:`Foto 03`,src:'sera_asset_06.jpg'},
+ {title:`Foto 04`,src:'sera_asset_03.jpg'},
+ {title:`Foto 05`,src:'sera_asset_07.jpg'},
+ {title:`Foto 06`,src:'sera_asset_08.jpg'},
+ {title:`Foto 07`,src:'sera_asset_09.jpg'},
+ {title:`Foto 08`,src:'sera_asset_10.jpg'},
+ {title:`Foto 09`,src:'sera_asset_11.jpg'},
+ {title:`Foto 10`,src:'sera_asset_12.jpg'},
+ {title:`Foto 11`,src:'sera_asset_13.jpg'},
+ {title:`Foto 12`,src:'sera_asset_14.jpg'},
+ {title:`Foto 13`,src:'sera_asset_15.jpg'},
+ {title:`Foto 14`,src:'sera_asset_16.jpg'},
+ {title:`Foto 15`,src:'sera_asset_17.jpg'},
+ {title:`Foto 16`,src:'sera_asset_18.jpg'},
+ {title:`Foto 17`,src:'sera_asset_19.jpg'},
+ {title:`Foto 18`,src:'sera_asset_20.jpg'},
+ {title:`Foto 19`,src:'sera_asset_21.jpg'},
+ {title:`Foto 20`,src:'sera_asset_22.jpg'},
+ {title:`Foto 21`,src:'sera_asset_23.jpg'},
+ {title:`Foto 22`,src:'sera_asset_24.jpg'},
+ {title:`Foto 23`,src:'sera_asset_25.jpg'},
+ {title:`Foto 24`,src:'sera_asset_26.jpg'},
+ {title:`Foto 25`,src:'sera_asset_27.jpg'},
+ {title:`Foto 26`,src:'sera_asset_28.jpg'},
+ {title:`Foto 27`,src:'sera_asset_29.jpg'},
+ {title:`Foto 28`,src:'sera_asset_30.jpg'},
+ {title:`Foto 29`,src:'sera_asset_31.jpg'}
+];
+let seraGalleryIndex=0, galleryScale=1, galleryStartX=0, galleryStartY=0, galleryPinchStart=0, galleryPinchScale=1, galleryLastTap=0;
+function setSeraGalleryPhoto(index){
+ if(!seraPhotos.length)return;
+ seraGalleryIndex=(index+seraPhotos.length)%seraPhotos.length;
+ const photo=seraPhotos[seraGalleryIndex], img=$("gallery-viewer-image");
+ galleryScale=1; img.style.transform='scale(1)';
+ img.src=photo.src; img.alt=photo.title;
+ $("gallery-viewer-caption").textContent=`${photo.title} · ${seraGalleryIndex+1} dari ${seraPhotos.length}`;
+}
+function buildSeraGallery(){
+ const grid=$("gallery-grid"); if(!grid || grid.dataset.built==="yes")return;
+ grid.dataset.built="yes";
+ seraPhotos.forEach((photo,index)=>{
+   const button=document.createElement("button"); button.className="gallery-thumb"; button.type="button"; button.setAttribute("aria-label",`Buka ${photo.title}`);
+   const img=document.createElement("img"); img.src=photo.src; img.alt=photo.title; img.loading="lazy";
+   img.onerror=()=>img.classList.add("bad-image");
+   const fallback=document.createElement("span"); fallback.className="gallery-fallback"; fallback.textContent=`${photo.title}\nGambar tidak dapat dimuat`;
+   button.append(img,fallback);
+   button.addEventListener("click",()=>{setSeraGalleryPhoto(index);$("gallery-viewer").classList.add("show");});
+   grid.appendChild(button);
+ });
+}
+function changeGalleryZoom(next){galleryScale=Math.max(1,Math.min(4,next));$("gallery-viewer-image").style.transform=`scale(${galleryScale})`;}
+$("gallery-prev").addEventListener("click",()=>setSeraGalleryPhoto(seraGalleryIndex-1));
+$("gallery-next").addEventListener("click",()=>setSeraGalleryPhoto(seraGalleryIndex+1));
+const galleryImage=$("gallery-viewer-image");
+galleryImage.addEventListener("touchstart",e=>{
+ if(e.touches.length===2){galleryPinchStart=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);galleryPinchScale=galleryScale;}
+ else if(e.touches.length===1){galleryStartX=e.touches[0].clientX;galleryStartY=e.touches[0].clientY;}
+},{passive:true});
+galleryImage.addEventListener("touchmove",e=>{
+ if(e.touches.length===2&&galleryPinchStart){const dist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);changeGalleryZoom(galleryPinchScale*dist/galleryPinchStart);e.preventDefault();}
+},{passive:false});
+galleryImage.addEventListener("touchend",e=>{
+ if(galleryPinchStart){galleryPinchStart=0;return;}
+ if(!e.changedTouches.length)return;
+ const dx=e.changedTouches[0].clientX-galleryStartX, dy=e.changedTouches[0].clientY-galleryStartY;
+ if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)&&galleryScale===1){setSeraGalleryPhoto(seraGalleryIndex+(dx<0?1:-1));return;}
+ const now=Date.now(); if(now-galleryLastTap<320){changeGalleryZoom(galleryScale>1?1:2.3);} galleryLastTap=now;
+},{passive:true});
+galleryImage.addEventListener("wheel",e=>{e.preventDefault();changeGalleryZoom(galleryScale+(e.deltaY<0?.2:-.2));},{passive:false});
+const seraMusic = [
+ {title:"drivers license",artist:"Olivia Rodrigo",id:"2PRvp-mP_q0"},
+ {title:"traitor",artist:"Olivia Rodrigo",id:"5CZ4j5Og_to"},
+ {title:"Dynamite",artist:"BTS",id:"gdZLi9oWNZg"},
+ {title:"Spring Day",artist:"BTS",id:"xEeFrLSkMm8"},
+ {title:"Yank",artist:"Wali",id:"Oaifu0F_-Ro"},
+ {title:"Baik-Baik Sayang",artist:"Wali",id:"r6Z7Cpxl32k"}
+];
+let seraTrack=-1, seraPlaying=false, seraEndAt=0;
+function ytSend(func,args){
+  const f=document.querySelector("#music-player-slot iframe");
+  if(f&&f.contentWindow)f.contentWindow.postMessage(JSON.stringify({event:"command",func:func,args:args||[]}),"*");
+}
+function syncMusicUI(){
+  const title=$("music-now-title"); if(!title)return;
+  const t=seraMusic[seraTrack], tog=$("music-toggle");
+  if(t){
+    title.textContent=t.title; $("music-now-artist").textContent=t.artist+(seraPlaying?" · sedang diputar":" · dijeda");
+    tog.classList.add("show"); tog.textContent=seraPlaying?"⏸ Jeda":"▶ Putar";
+  }
+  document.querySelectorAll("#music-track-list [data-track]").forEach(btn=>{
+    const on=Number(btn.dataset.track)===seraTrack; btn.classList.toggle("active",on);
+    const p=btn.querySelector(".music-play"); if(p)p.textContent=on?(seraPlaying?"❚❚":"▶"):"▷";
+  });
+}
+function playSeraTrack(i,auto){
+  const t=seraMusic[i], slot=$("music-player-slot"); if(!t||!slot)return;
+  seraTrack=i; seraPlaying=true;
+  if(auto&&slot.querySelector("iframe")){ ytSend("loadVideoById",[t.id]); }
+  else{
+    const origin=(location.origin&&location.origin!=="null")?"&origin="+encodeURIComponent(location.origin):"";
+    slot.innerHTML=`<iframe class="music-player" title="${t.title} — ${t.artist}" src="https://www.youtube.com/embed/${t.id}?autoplay=1&controls=1&rel=0&playsinline=1&enablejsapi=1${origin}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe><a class="music-external-link" href="https://www.youtube.com/watch?v=${t.id}" target="_blank" rel="noopener noreferrer">Tidak bisa diputar? Buka lagu di YouTube ↗</a>`;
+    const f=slot.querySelector("iframe");
+    f.addEventListener("load",()=>{ try{ f.contentWindow.postMessage(JSON.stringify({event:"listening",id:1,channel:"widget"}),"*"); }catch(e){} });
+  }
+  syncMusicUI();
+}
+function toggleSeraPlayback(){
+  if(seraTrack<0)return;
+  ytSend(seraPlaying?"pauseVideo":"playVideo"); seraPlaying=!seraPlaying; syncMusicUI();
+}
+/* Status pemutar dari YouTube: sinkron tombol Jeda/Putar & lanjut otomatis ke lagu berikutnya */
+window.addEventListener("message",e=>{
+  const f=document.querySelector("#music-player-slot iframe");
+  if(!f||e.source!==f.contentWindow)return;
+  let d=e.data; if(typeof d==="string"){ try{ d=JSON.parse(d); }catch(_){ return; } }
+  if(!d||typeof d!=="object")return;
+  const st=d.event==="onStateChange"?d.info:(d.event==="infoDelivery"&&d.info&&typeof d.info.playerState==="number"?d.info.playerState:null);
+  if(st===null)return;
+  if(st===1)seraPlaying=true; else if(st===2)seraPlaying=false;
+  else if(st===0&&d.event==="onStateChange"&&Date.now()-seraEndAt>1500){ seraEndAt=Date.now(); playSeraTrack((seraTrack+1)%seraMusic.length,true); return; }
+  syncMusicUI();
+});
+/* Tampilan Musik dibuat sekali & dipertahankan agar lagu tetap jalan di latar belakang saat aplikasi ditutup */
+function buildMusicApp(){
+  const root=$("music-app-content"); if(!root||root.dataset.built==="yes")return;
+  root.dataset.built="yes";
+  root.innerHTML=`<div class="native-status"><span>9:41</span><span>●●●  ▰  ▰</span></div><div class="music-screen"><div class="music-top"><span>♫ MUSIC</span><span>•••</span></div><div class="music-feature"><h3>Playlist Sera</h3><p>Lagu-lagu yang menemani perjalanan pulang, tugas, dan hal-hal yang belum berani ia katakan.</p></div><div class="music-now"><div id="music-player-slot"><div class="music-idle">♫</div></div><div class="music-now-row"><div class="music-now-copy"><div class="music-now-title" id="music-now-title">Pilih lagu untuk diputar</div><div class="music-now-artist" id="music-now-artist">Playlist Sera</div></div><button class="music-toggle" id="music-toggle">⏸ Jeda</button></div></div><div class="music-section-label">Lagu Sera</div><div id="music-track-list">${seraMusic.map((t,i)=>`<button class="music-track" data-track="${i}"><span class="music-cover">♫</span><span class="music-track-copy"><div class="music-track-name">${t.title}</div><div class="music-track-artist">${t.artist}</div></span><span class="music-play">▷</span></button>`).join("")}</div><p style="font-size:10px;color:#8b8590;line-height:1.5;margin-top:12px">Pemutaran menggunakan YouTube dan membutuhkan internet. Ketuk tombol ▶ di daftar lagu; jika pemutar tidak muncul atau tetap gelap, gunakan tautan “Buka lagu di YouTube”.</p></div>`;
+  root.querySelectorAll("[data-track]").forEach(btn=>btn.addEventListener("click",()=>{ const i=Number(btn.dataset.track); i===seraTrack?toggleSeraPlayback():playSeraTrack(i); }));
+  $("music-toggle").addEventListener("click",toggleSeraPlayback);
+}
+function renderNativeApp(id){
+ const root=$("native-app-content"); if(!root)return;
+ root.classList.add("show");
+ const status='<div class="native-status"><span>9:41</span><span>●●●  ▰  ▰</span></div>';
+ if(id==="safari"){
+  root.innerHTML=status+`<div class="native-title">Safari</div><p class="native-subtitle">Apa yang ingin Sera cari hari ini?</p><form class="safari-search" id="safari-search-form"><span>🔎</span><input id="safari-query" placeholder="Cari atau masukkan situs web" aria-label="Cari di Safari"><button type="submit">Cari</button></form><div class="safari-start"><b>Favorit</b><div class="safari-favorites"><div class="safari-fav"><i>🌐</i>Google</div><div class="safari-fav"><i>▶️</i>YouTube</div><div class="safari-fav"><i>📚</i>Wikipedia</div><div class="safari-fav"><i>🎧</i>Spotify</div><div class="safari-fav"><i>☁️</i>iCloud</div><div class="safari-fav"><i>📰</i>Berita</div></div></div><div class="safari-start" style="margin-top:12px"><b>Privasi di Safari</b><p style="font-size:12px;color:#777;line-height:1.5;margin-top:7px">Jelajahi internet dengan tampilan browser yang sederhana.</p></div><div class="native-homebar"></div>`;
+  $("safari-search-form").addEventListener("submit",e=>{e.preventDefault();const q=$("safari-query").value.trim();if(q)window.open(/^https?:\/\//i.test(q)?q:'https://www.google.com/search?q='+encodeURIComponent(q),'_blank','noopener');});
+ } else if(id==="catatan"){
+  root.innerHTML=status+`<div class="notes-screen"><div class="native-title">Catatan</div><p class="native-subtitle">Semua catatan · di iPhone ini</p><div class="notes-group">Hari ini</div><article class="note-card note-open-card" data-note="todo"><h3>To-do hari ini ☁️</h3><p>□ Selesaikan tugas kelompok · Beli kopi · Balas chat grup kelas…</p><div class="note-meta">07.15 · Ketuk untuk membuka</div></article><article class="note-card note-open-card" data-note="ingat"><h3>Hal kecil yang harus diingat</h3><p>Charger di tas. Buku di meja. Jangan lupa bawa payung…</p><div class="note-meta">Kemarin · Ketuk untuk membuka</div></article><div class="notes-group">Catatan pribadi</div><article class="note-card note-open-card" data-note="film"><h3>Film yang mau ditonton 🎬</h3><p>Interstellar, rekomendasi teman, dan jadwal yang cocok…</p><div class="note-meta">Senin · Ketuk untuk membuka</div></article><div class="notes-group">Surat yang tidak pernah dikirim</div><article class="letter-card note-open-card" data-note="surat1"><span class="letter-seal">✉️</span><h3>Untuk Gaska — kalau suatu hari aku berani</h3><p>Ada hal yang selalu ingin Sera katakan.</p><div class="letter-lock">🔒 Belum bisa dibuka</div></article><article class="letter-card note-open-card" data-note="surat2"><span class="letter-seal">💌</span><h3>Untuk Gaska, tentang hari itu</h3><p>Disimpan sebagai draf.</p><div class="letter-lock">🔒 Akan terbuka sesuai alur cerita</div></article><p class="native-note-hint">Ketuk catatan biasa untuk membaca isinya. Surat untuk Gaska tetap terkunci sampai alur cerita membukanya.</p><div class="native-homebar"></div></div>`;
+  const noteDetails={
+   todo:{title:"To-do hari ini ☁️",body:"□ Selesaikan tugas kelompok\n□ Beli kopi sebelum kelas\n□ Balas chat grup kelas\n□ Cari film yang bisa ditonton akhir pekan\n□ Jangan lupa makan siang",meta:"07.15 · Catatan pribadi"},
+   ingat:{title:"Hal kecil yang harus diingat",body:"Charger di tas. Buku di meja. Jangan lupa bawa payung—langit kelihatan mendung.\n\nDan jangan lupa mengembalikan buku Gaska.",meta:"Kemarin · Catatan pribadi"},
+   film:{title:"Film yang mau ditonton 🎬",body:"• Interstellar\n• Film yang direkomendasikan teman\n• Cari jadwal yang nggak bentrok sama kelas\n\nCatatan kecil: tanya Gaska apakah dia sudah pernah menonton Interstellar.",meta:"Senin · Catatan pribadi"}
+  };
+  root.querySelectorAll("[data-note]").forEach(card=>card.addEventListener("click",()=>{
+   const key=card.dataset.note;
+   if(key==="surat1"||key==="surat2"){toast("Surat ini masih terkunci. Selesaikan bagian cerita terlebih dahulu.");buzz(20);return;}
+   const n=noteDetails[key];if(!n)return;
+   const screen=root.querySelector(".notes-screen");
+   screen.innerHTML=`<button class="note-detail-back" id="note-detail-back">‹ Semua Catatan</button><div class="native-title" style="font-size:25px">${n.title}</div><div class="note-detail-paper"><p style="white-space:pre-line;line-height:1.8;font-size:15px">${n.body}</p></div><p class="note-meta" style="margin-top:12px">${n.meta}</p><div class="native-homebar"></div>`;
+   $("note-detail-back").addEventListener("click",()=>renderNativeApp("catatan"));
+  }));
+ } else if(id==="peta"){
+  root.innerHTML=status+`<div class="native-title">Peta</div><div style="height:240px;border-radius:20px;background:linear-gradient(35deg,#d9e8dc,#e9eddf 35%,#d9e4ef 36%,#d9e4ef 49%,#eee8dc 50%);position:relative;overflow:hidden"><div style="position:absolute;left:8%;top:30%;width:90%;height:5px;background:#fff;transform:rotate(24deg)"></div><div style="position:absolute;left:10%;top:66%;width:90%;height:5px;background:#fff;transform:rotate(-17deg)"></div><div style="position:absolute;left:52%;top:45%;font-size:28px">📍</div><div style="position:absolute;left:15%;top:12%;font-size:11px;color:#5d6c61">Kota</div></div><div class="note-card" style="margin-top:14px"><h3>Lokasi tersimpan</h3><p>Lokasi belum tersedia. Petunjuk peta akan terbuka saat cerita membawamu ke sini.</p></div>`;
+ } else if(id==="telepon"){
+  root.innerHTML=status+`<div class="native-title">Telepon</div><div class="note-card"><b style="font-size:14px">Terbaru</b><p style="margin-top:14px">Belum ada panggilan terbaru.</p></div>`;
+ } else if(id==="kamera"){
+  root.innerHTML=status+`<div style="margin:0 -16px;background:#161616;height:72%;display:flex;flex-direction:column;justify-content:space-between;align-items:center;padding:25px 0;color:#eee"><div style="font-size:12px">Foto · Video · Potret</div><div style="width:65px;height:65px;border-radius:50%;border:5px solid #eee;box-shadow:0 0 0 3px #666"></div><div style="font-size:12px;color:#aaa">Kamera simulasi tidak mengakses kamera perangkat.</div></div>`;
+ } else if(id==="pengaturan"){
+  root.innerHTML=status+`<div class="native-title">Pengaturan</div><div class="safari-search" style="background:#e6e6eb">🔎 <span style="font-size:13px;color:#777">Cari pengaturan</span></div>${[['✈️','Mode Pesawat'],['📶','Wi-Fi'],['🔵','Bluetooth'],['🔋','Baterai'],['🖼️','Wallpaper'],['🔔','Notifikasi']].map(x=>`<div class="note-card" style="display:flex;gap:12px;align-items:center;padding:13px"><span style="font-size:20px">${x[0]}</span><b style="font-size:13px">${x[1]}</b><span style="margin-left:auto;color:#aaa">›</span></div>`).join('')}`;
+ }
+}
+function showPreviewApp(a){
+ const w=$("preview-app"); if(!w)return;
+ w.classList.remove("gallery-open","native-open"); $("gallery-viewer").classList.remove("show");
+ const root=$("native-app-content"); if(root){root.classList.remove("show");root.innerHTML='';}
+  $("music-app-content")?.classList.remove("show");
+ $("preview-title").textContent=a.name; $("preview-heading").textContent=a.name;
+ $("preview-description").textContent=previewDescriptions[a.id]||"Aplikasi ini bisa dilihat, tetapi belum dapat digunakan di luar urutan cerita.";
+ const emoji={galeri:"🖼️",catatan:"📝",musik:"🎵",peta:"🗺️",telepon:"📞",safari:"🧭",kamera:"📷",pengaturan:"⚙️"};
+ $("preview-icon").textContent=emoji[a.id]||"📱";
+ if(a.id==="galeri") { w.classList.add("gallery-open"); buildSeraGallery(); }
+ else if(a.id==="musik"){w.classList.add("native-open");buildMusicApp();$("music-app-content").classList.add("show");}
+  else if(["safari","catatan","peta","telepon","kamera","pengaturan"].includes(a.id)){w.classList.add("native-open");renderNativeApp(a.id);}
+ w.classList.add("show");
+}
+$("preview-back").addEventListener("click",()=>{ $("preview-app").classList.remove("show","native-open"); $("gallery-viewer").classList.remove("show"); const n=$("native-app-content"); if(n){n.classList.remove("show");n.innerHTML="";} });
+$("gallery-viewer-close").addEventListener("click",()=>$("gallery-viewer").classList.remove("show"));
+
+/* ===== Interaksi aplikasi Pesan ===== */
+let pesanChoiceMade = false;
+let berani = 0;
+let ragu = 0;
+
+function closePesan(){
+  $("pesan-window").classList.remove("show", "inbox-state");
+}
+function closeTelegram(){ $("telegram-window").classList.remove("show"); }
+function openSeraTelegram(){ removeNotif("telegram"); $("tg-inbox").style.display="none"; $("tg-chat").style.display="flex"; $("tg-body").scrollTop=$("tg-body").scrollHeight; }
+$("tg-back").addEventListener("click", ()=>{ $("tg-chat").style.display="none"; $("tg-inbox").style.display="flex"; });
+$("tg-home-back").addEventListener("click", closeTelegram);
+$("open-sera-telegram").addEventListener("click", openSeraTelegram);
+$("open-sera-telegram").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openSeraTelegram();}});
+function scheduleTelegramNotification(){
+  if(scheduleTelegramNotification.done) return;
+  scheduleTelegramNotification.done = true;
+  setTimeout(()=>{
+    const banner = $("telegram-banner");
+    if(!banner || lock.classList.contains("unlocked") === false) return;
+    pushNotif({id:"telegram",app:"telegram",who:"Find me bro",msg:"kalau sudah, chat aku disini yaa",when:"sekarang"});
+    if(!$("notif-center").classList.contains("open")) banner.classList.add("show");
+    if (navigator.vibrate) { try { navigator.vibrate([180, 90, 180]); } catch(e) {} }
+    if ("Notification" in window && Notification.permission === "granted") {
+      try { const n = new Notification("Telegram · Find me bro", { body: "kalau sudah, chat aku disini yaa", tag: "sera-telegram" }); n.onclick = ()=>{ window.focus(); openTelegramFromBanner(); n.close(); }; } catch(e) {}
+    }
+    clearTimeout(scheduleTelegramNotification.hideTimer);
+    scheduleTelegramNotification.hideTimer = setTimeout(()=>banner.classList.remove("show"), 6500);
+  }, 10000);
+}
+function openTelegramFromBanner(){ goHome(); removeNotif("telegram"); $("telegram-banner").classList.remove("show");
+  $("telegram-window").classList.add("show");
+  $("tg-inbox").style.display="flex";
+  $("tg-chat").style.display="none";
+}
+$("telegram-banner").addEventListener("click", openTelegramFromBanner);
+$("telegram-banner").addEventListener("keydown", e=>{
+  if(e.key === "Enter" || e.key === " "){ e.preventDefault(); openTelegramFromBanner(); }
+});
+$("inbox-back").addEventListener("click", closePesan);
+$("pesan-back").addEventListener("click", ()=>{
+  $("pesan-window").classList.add("inbox-state");
+}); 
+$("open-gaska-chat").addEventListener("click", ()=>{
+  $("pesan-window").classList.remove("inbox-state");
+  $("msg-body").scrollTop = 0;
+});
+const gaskaHistory = $("msg-body").innerHTML;
+document.querySelectorAll(".other-chat").forEach(row=>row.addEventListener("click",()=>{
+  const name=row.dataset.contact; const body=$("msg-body");
+  const histories={
+    "Kirana":'<div class="msg-day">iMessage · Kemarin</div><div class="bubble gaska">Sera, besok jadi makan bareng?</div><div class="bubble sera">lihat jadwalku dulu yaa</div><div class="bubble gaska">okee kabarin aja</div>',
+    "Grup Angkatan":'<div class="msg-day">iMessage · Senin</div><div class="bubble gaska">Rafi: presentasi kelompok besok jam 9 yaa</div><div class="bubble sera">Sera: noted, aku bawa bagian referensi</div><div class="bubble gaska">Rafi: makasih semuanya!</div>',
+    "Mama":'<div class="msg-day">iMessage · Minggu</div><div class="bubble gaska">Mama: jangan lupa makan dulu sebelum pulang, Ser</div><div class="bubble sera">Sera: iya Maa, habis kelas ini</div><div class="bubble gaska">Mama: hati-hati di jalan</div>'
+  };
+  $("pesan-window").classList.remove("inbox-state");
+  document.querySelector(".msg-person strong").textContent=name;
+  document.querySelector(".msg-person small").textContent="Riwayat pesan · hanya bisa dibaca";
+  body.innerHTML=(histories[name]||'')+'<div class="story-note">Riwayat chat saja — tidak ada interaksi di sini.</div>';
+  $("pesan-back").onclick=()=>{body.innerHTML=gaskaHistory;document.querySelector(".msg-person strong").textContent="Gaska";document.querySelector(".msg-person small").textContent="iMessage · terakhir aktif baru saja";$("pesan-window").classList.add("inbox-state");};
+}));
+
+
+document.querySelectorAll(".tg-choice[data-tg-choice]").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    if(pesanChoiceMade) return;
+    pesanChoiceMade = true;
+    const body = $("tg-body");
+    const area = $("tg-choice-area");
+    if(btn.dataset.tgChoice === "reply"){
+      berani++;
+      body.insertAdjacentHTML("beforeend",
+        '<div class="tg-bubble gaska">bentar, wallpaper HP kamu itu foto aku, ya? 😭</div>'+
+        '<div class="tg-bubble sera">hehe, berarti kamu nemu pesanku.</div>'+
+        '<div class="tg-bubble gaska">Sera, serius. kok bisa-bisanya foto aku jadi wallpaper kamu?</div>'+
+        '<div class="tg-bubble sera">aku punya permainan kecil buat kamu. kalau mau nemuin aku, ikutin petunjuk yang aku tinggalin. jangan curang ya, Gaska.</div>'+
+        '<div class="tg-bubble sera">mulai dari galeri. ada satu foto yang harus kamu ingat.</div>');
+    } else {
+      ragu++;
+      body.insertAdjacentHTML("beforeend",
+        '<div class="tg-bubble gaska">bentar, wallpaper HP kamu itu foto aku? terus ini sebenernya mau ngapain?</div>'+
+        '<div class="tg-bubble sera">hehe, berarti kamu nemu pesanku.</div>'+
+        '<div class="tg-bubble sera">aku punya permainan kecil buat kamu. aku pengin kamu nemuin aku lewat beberapa petunjuk. tenang, nggak susah-susah amat kok.</div>'+
+        '<div class="tg-bubble sera">ujung-ujungnya kamu tetap harus mulai dari galeri. pilih foto yang paling kamu ingat, ya.</div>');
+    }
+    area.innerHTML =
+      '<div class="tg-prompt">Sera menyuruh Gaska membuka Galeri. Apa jawabannya?</div>'+
+      '<button class="tg-choice" id="tg-open-gallery-now">“Sebentar, aku buka dulu.”</button>'+
+      '<button class="tg-choice secondary" id="tg-ask-what">“Ada apasih? Ini mau ngapain?”</button>';
+
+    function goToGallery(){
+      area.innerHTML = '<div class="tg-prompt">Membuka Galeri…</div>';
+      setTimeout(()=>{
+        closeTelegram();
+        const gallery = CONFIG.apps.find(a=>a.id==="galeri");
+        if(gallery){ gallery.locked = false; showPreviewApp(gallery); }
+        toast("Galeri terbuka. Cari foto yang paling kamu ingat.");
+      }, 2000);
+    }
+    $("tg-open-gallery-now").addEventListener("click", ()=>{
+      body.insertAdjacentHTML("beforeend", '<div class="tg-bubble gaska">sebentar, aku buka dulu.</div>');
+      body.scrollTop=body.scrollHeight;
+      goToGallery();
+    });
+    $("tg-ask-what").addEventListener("click", ()=>{
+      body.insertAdjacentHTML("beforeend",
+        '<div class="tg-bubble gaska">ada apasih? ini mau ngapain?</div>'+
+        '<div class="tg-bubble sera">aku cuma mau ngajak Gaska main riddle kecil. aku udah nyiapin petunjuk di HP ini, kamu tinggal ikutin satu-satu.</div>'+
+        '<div class="tg-bubble sera">nggak boleh langsung nyerah, ya. sekarang buka galeri dulu. dari situ baru kamu ngerti.</div>');
+      area.innerHTML = '<div class="tg-prompt">Pada akhirnya, Gaska tetap harus membuka Galeri.</div><button class="tg-choice" id="tg-open-gallery-after-explain">Oke, buka Galeri</button>';
+      $("tg-open-gallery-after-explain").addEventListener("click", ()=>{
+        body.insertAdjacentHTML("beforeend", '<div class="tg-bubble gaska">oke, aku buka galeri dulu.</div>');
+        body.scrollTop=body.scrollHeight;
+        goToGallery();
+      });
+      body.scrollTop=body.scrollHeight;
+    });
+    body.scrollTop = body.scrollHeight;
+  });
+});
+
+
+/* Intro narrative -> Sera's lockscreen */
+const introContinue = document.getElementById("intro-continue");
+if (introContinue) {
+  introContinue.addEventListener("click", () => {
+    document.getElementById("intro-screen").classList.add("hidden");
+  });
+}
+
+
+/* =========================================================
+   Gestur iPhone: geser dari atas = Pusat Notifikasi,
+   geser ke atas dari bawah layar = kembali ke Home
+   ========================================================= */
+const uiPhone=$("phone"), ncPanel=$("notif-center"), ncGrab=$("nc-grab"), homeGrab=$("home-grab");
+const NOTIFS=CONFIG.lockNotifications.map((n,i)=>({id:"lock"+i,app:n.app,who:n.who,msg:n.msg,when:n.when}));
+function pushNotif(n){ removeNotif(n.id); NOTIFS.unshift(n); if(ncPanel.classList.contains("open"))renderNotifs(); }
+function removeNotif(id){ const i=NOTIFS.findIndex(n=>n.id===id); if(i>-1){ NOTIFS.splice(i,1); if(ncPanel.classList.contains("open"))renderNotifs(); } }
+function renderNotifs(){
+  $("nc-date").textContent=CONFIG.date; $("nc-time").textContent=CONFIG.time;
+  const list=$("nc-list"); list.innerHTML="";
+  if(!NOTIFS.length){ list.innerHTML='<div class="nc-empty">Tidak ada notifikasi</div>'; return; }
+  NOTIFS.forEach(n=>{
+    const el=document.createElement("div"); el.className="nc-item"; el.setAttribute("role","button"); el.tabIndex=0;
+    el.appendChild(iconEl(n.app));
+    const tx=document.createElement("div"); tx.className="tx";
+    tx.innerHTML=`<div class="hd"><span class="who">${n.who}</span><span class="when">${n.when}</span></div><div class="msg">${n.msg}</div>`;
+    el.appendChild(tx);
+    el.addEventListener("click",()=>openNotif(n));
+    el.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); openNotif(n); } });
+    list.appendChild(el);
+  });
+}
+function openNC(){
+  if(!lock.classList.contains("unlocked"))return;
+  renderNotifs(); $("telegram-banner").classList.remove("show");
+  ncPanel.classList.add("open"); ncPanel.setAttribute("aria-hidden","false"); uiPhone.classList.add("nc-open");
+}
+function closeNC(){ ncPanel.classList.remove("open"); ncPanel.setAttribute("aria-hidden","true"); uiPhone.classList.remove("nc-open"); }
+function openNotif(n){
+  removeNotif(n.id); goHome();
+  if(n.app==="telegram"){ openTelegramFromBanner(); return; }
+  const a=CONFIG.apps.find(x=>x.id===n.app), el=document.querySelector(`.app[data-id="${n.app}"]`);
+  if(a&&el)openApp(a,el);
+}
+function restoreGaskaChat(){
+  const s=document.querySelector(".msg-person strong"); if(!s||s.textContent==="Gaska")return;
+  $("msg-body").innerHTML=gaskaHistory; s.textContent="Gaska";
+  document.querySelector(".msg-person small").textContent="iMessage · terakhir aktif baru saja";
+}
+function goHome(){
+  closeNC(); $("pesan-window").classList.remove("show","inbox-state"); restoreGaskaChat();
+  $("telegram-window").classList.remove("show");
+  $("preview-app").classList.remove("show","native-open","gallery-open"); $("gallery-viewer").classList.remove("show");
+  const n=$("native-app-content"); if(n){ n.classList.remove("show"); n.innerHTML=""; }
+  $("music-app-content")?.classList.remove("show");   /* musik tetap diputar di latar belakang */
+}
+
+/* Tarik dari atas layar -> buka Pusat Notifikasi (mengikuti jari) */
+let ncDrag=null, ncUp=null;
+ncGrab.addEventListener("pointerdown",e=>{
+  if(ncPanel.classList.contains("open")||!lock.classList.contains("unlocked"))return;
+  renderNotifs(); ncDrag={y:e.clientY,t:performance.now(),dy:0,h:uiPhone.getBoundingClientRect().height};
+  ncPanel.classList.add("dragging"); ncPanel.style.transform=`translateY(${-ncDrag.h}px)`; ncGrab.setPointerCapture(e.pointerId);
+});
+ncGrab.addEventListener("pointermove",e=>{
+  if(!ncDrag)return; ncDrag.dy=Math.max(0,Math.min(ncDrag.h,e.clientY-ncDrag.y));
+  ncPanel.style.transform=`translateY(${ncDrag.dy-ncDrag.h}px)`;
+});
+function endNcDrag(){
+  if(!ncDrag)return; const d=ncDrag; ncDrag=null;
+  ncPanel.classList.remove("dragging"); ncPanel.style.transform="";
+  (d.dy>90||(d.dy>30&&d.dy/(performance.now()-d.t)>.5))?openNC():closeNC();
+}
+ncGrab.addEventListener("pointerup",endNcDrag); ncGrab.addEventListener("pointercancel",endNcDrag);
+
+/* Geser ke atas di dalam panel -> tutup */
+ncPanel.addEventListener("pointerdown",e=>{
+  if(ncPanel.classList.contains("open"))ncUp={y:e.clientY,t:performance.now(),dy:0,cap:false,id:e.pointerId,h:ncPanel.getBoundingClientRect().height};
+});
+ncPanel.addEventListener("pointermove",e=>{
+  if(!ncUp)return; const dy=e.clientY-ncUp.y;
+  if(!ncUp.cap){ if(dy>-8)return; ncUp.cap=true; ncPanel.setPointerCapture(ncUp.id); ncPanel.classList.add("dragging"); }
+  ncUp.dy=Math.max(-ncUp.h,Math.min(0,dy)); ncPanel.style.transform=`translateY(${ncUp.dy}px)`;
+});
+function endNcUp(){
+  if(!ncUp)return; const d=ncUp; ncUp=null; if(!d.cap)return;
+  ncPanel.classList.remove("dragging"); ncPanel.style.transform="";
+  (-d.dy>90||(-d.dy>30&&-d.dy/(performance.now()-d.t)>.5))?closeNC():openNC();
+}
+ncPanel.addEventListener("pointerup",endNcUp); ncPanel.addEventListener("pointercancel",endNcUp);
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&ncPanel.classList.contains("open"))closeNC(); });
+
+/* Geser ke atas dari bawah layar -> kembali ke Home */
+const topWin=()=>["preview-app","telegram-window","pesan-window"].map($).find(w=>w.classList.contains("show"));
+function dragWin(w,dy){
+  const k=Math.min(dy/400,1); w.style.transformOrigin="50% 100%";
+  w.style.transform=`translateY(${-dy*.3}px) scale(${1-.14*k})`; w.style.borderRadius=Math.round(46*k)+"px"; w.style.overflow="hidden";
+}
+function freeWin(w){ ["transform","transform-origin","transition","opacity","border-radius","overflow"].forEach(p=>w.style.removeProperty(p)); }
+let hg=null;
+homeGrab.addEventListener("pointerdown",e=>{
+  hg={y:e.clientY,t:performance.now(),dy:0,w:ncPanel.classList.contains("open")?null:topWin()};
+  homeGrab.setPointerCapture(e.pointerId);
+});
+homeGrab.addEventListener("pointermove",e=>{ if(!hg)return; hg.dy=Math.max(0,hg.y-e.clientY); if(hg.w)dragWin(hg.w,hg.dy); });
+function endHomeSwipe(){
+  if(!hg)return; const {dy,w,t}=hg; hg=null;
+  const go=dy>70||(dy>25&&dy/(performance.now()-t)>.45);
+  if(!w){ if(go)closeNC(); return; }
+  w.style.transition="transform .26s var(--ease),opacity .26s,border-radius .26s";
+  if(go){ w.style.transform="translateY(-50px) scale(.78)"; w.style.opacity="0"; w.style.borderRadius="46px"; setTimeout(()=>{ goHome(); freeWin(w); },270); }
+  else{ w.style.transform="none"; w.style.borderRadius="0px"; setTimeout(()=>freeWin(w),270); }
+}
+homeGrab.addEventListener("pointerup",endHomeSwipe); homeGrab.addEventListener("pointercancel",endHomeSwipe);
+
+/* Indikator home: gelap di app terang, putih di app gelap/Home */
+function syncAppState(){
+  uiPhone.classList.toggle("app-open",["pesan-window","telegram-window","preview-app"].some(id=>$(id).classList.contains("show")));
+  uiPhone.classList.toggle("dark-app",$("gallery-viewer").classList.contains("show"));
+}
+const uiObs=new MutationObserver(syncAppState);
+["pesan-window","telegram-window","preview-app","gallery-viewer"].forEach(id=>uiObs.observe($(id),{attributes:true,attributeFilter:["class"]}));
+syncAppState();
+
+</script>
+</body>
+</html>
