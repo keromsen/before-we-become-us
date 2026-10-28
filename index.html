@@ -493,7 +493,7 @@ Tempel seluruh file ini ke kolom HTML CodePen. CSS dan JavaScript sudah termasuk
         </div>
         <div class="inbox-row other-chat" data-contact="Kirana">
           <div class="inbox-avatar">K</div>
-          <div class="inbox-info"><div class="inbox-name">Kirana <time>Kemarin</time></div><div class="inbox-preview">Sera, jadi ikut makan di kantin kampus nggak?</div></div><span class="inbox-chevron">›</span>
+          <div class="inbox-info"><div class="inbox-name">Kirana <time>Kemarin</time></div><div class="inbox-preview">SER, KAMU SUKA SAMA GASKA YA??</div></div><span class="inbox-chevron">›</span>
         </div>
         <div class="inbox-row other-chat" data-contact="Grup Angkatan">
           <div class="inbox-avatar alt">A</div>
@@ -566,7 +566,7 @@ Tempel seluruh file ini ke kolom HTML CodePen. CSS dan JavaScript sudah termasuk
         </div>
         <div class="tg-choice-area" id="tg-choice-area">
           <div class="tg-prompt">Apa yang akan Gaska lakukan?</div>
-          <button class="tg-choice" data-tg-choice="reply">“aku udah buka. kamu di mana, Sera?”</button>
+          <button class="tg-choice" data-tg-choice="reply">“aku udah buka, kamu dimana sera?”</button>
           <button class="tg-choice secondary" data-tg-choice="silent">“kenapa harus pake teka-teki segala?”</button>
         </div>
         <div class="tg-compose"><span>Pesan</span></div>
@@ -1042,7 +1042,7 @@ const gaskaHistory = $("msg-body").innerHTML;
 document.querySelectorAll(".other-chat").forEach(row=>row.addEventListener("click",()=>{
   const name=row.dataset.contact; const body=$("msg-body");
   const histories={
-    "Kirana":'<div class="msg-day">iMessage · Kemarin</div><div class="bubble gaska">Sera, besok jadi makan bareng?</div><div class="bubble sera">lihat jadwalku dulu yaa</div><div class="bubble gaska">okee kabarin aja</div>',
+    "Kirana":'<div class="msg-day">iMessage · Kemarin, 22.16</div><div class="bubble sera">Kirana, aku mau cerita tapi jangan ketawa ya 😭</div><div class="bubble gaska">lah kenapa, Ser?</div><div class="bubble sera">aku kayaknya makin aneh deh kalau soal Gaska.</div><div class="bubble gaska">ANJIR WKWK kok tiba-tiba Gaska lagi 😭</div><div class="bubble sera">seriusss. hal kecil yang dia lakuin aja kepikiran terus. dia nanya aku udah makan atau belum, terus inget hal-hal yang bahkan aku sendiri lupa pernah cerita.</div><div class="bubble gaska">Sera… itu namanya kamu merhatiin dia balik 😭</div><div class="bubble sera">jangan ngomong gituu. kita temenan dari lama, aku takut kalau aku salah ngerti semuanya terus malah jadi canggung.</div><div class="bubble gaska">aku ngerti. tapi kamu juga nggak harus buru-buru ngasih nama ke perasaanmu. yang penting jujur dulu sama diri sendiri.</div><div class="bubble sera">yang bikin tambah parah, aku nyimpen foto dia buat wallpaper. kayaknya aku udah nggak normal.</div><div class="bubble gaska">HAH FOTO GASKA JADI WALLPAPER??? SERA 😭😭</div><div class="bubble sera">KIRANA PLS JANGAN KERAS-KERAS 😭 makanya jangan bilang siapa-siapa, terutama orangnya.</div><div class="bubble gaska">aman, rahasia negara. tapi suatu hari kamu harus berani ngomong, ya. minimal jangan panik kalau dia sadar.</div><div class="bubble sera">aku nggak janji apa-apa. makasih udah dengerin aku, ya.</div><div class="bubble gaska">selalu, Ser. sekarang tidur. besok jangan salting sendiri pas ketemu dia wkwk</div>',
     "Grup Angkatan":'<div class="msg-day">iMessage · Senin</div><div class="bubble gaska">Rafi: presentasi kelompok besok jam 9 yaa</div><div class="bubble sera">Sera: noted, aku bawa bagian referensi</div><div class="bubble gaska">Rafi: makasih semuanya!</div>',
     "Mama":'<div class="msg-day">iMessage · Minggu</div><div class="bubble gaska">Mama: jangan lupa makan dulu sebelum pulang, Ser</div><div class="bubble sera">Sera: iya Maa, habis kelas ini</div><div class="bubble gaska">Mama: hati-hati di jalan</div>'
   };
@@ -1062,24 +1062,34 @@ document.querySelectorAll(".tg-choice[data-tg-choice]").forEach(btn=>{
     const area = $("tg-choice-area");
     if(btn.dataset.tgChoice === "reply"){
       berani++;
+      // Pesan yang terkirim sama persis dengan pilihan yang diketuk.
       body.insertAdjacentHTML("beforeend",
-        '<div class="tg-bubble gaska">bentar, wallpaper HP kamu itu foto aku, ya? 😭</div>'+
-        '<div class="tg-bubble sera">hehe, berarti kamu nemu pesanku.</div>'+
-        '<div class="tg-bubble gaska">Sera, serius. kok bisa-bisanya foto aku jadi wallpaper kamu?</div>'+
-        '<div class="tg-bubble sera">aku punya permainan kecil buat kamu. kalau mau nemuin aku, ikutin petunjuk yang aku tinggalin. jangan curang ya, Gaska.</div>'+
-        '<div class="tg-bubble sera">mulai dari galeri. ada satu foto yang harus kamu ingat.</div>');
+        '<div class="tg-bubble gaska">aku udah buka, kamu dimana sera?</div>'+
+        '<div class="tg-bubble sera">di tempat yang harusnya kamu bisa tebak kalau udah lihat petunjuk pertama 😌</div>'+
+        '<div class="tg-bubble gaska">bentar, sebelum itu… wallpaper HP kamu foto aku, ya? 😭</div>'+
+        '<div class="tg-bubble sera">KAMU LIAT?? aku kira kamu nggak bakal ngeh 😭</div>'+
+        '<div class="tg-bubble gaska">ya jelas ngeh, itu muka aku sendiri wkwk. kok bisa-bisanya foto aku jadi wallpaper kamu?</div>'+
+        '<div class="tg-bubble sera">nggak usah gede kepala dulu. fotonya bagus aja, kebetulan kamu ada di situ.</div>'+
+        '<div class="tg-bubble gaska">“kebetulan” katanya. yaudah, nanti aku interogasi lagi kalau ketemu.</div>'+
+        '<div class="tg-bubble sera">ih cerewet 😭 sekarang fokus dulu. aku ninggalin permainan kecil di HP ini biar kamu bisa nemuin aku.</div>'+
+        '<div class="tg-bubble gaska">jadi aku harus ngikutin petunjuk yang kamu tinggalin?</div>'+
+        '<div class="tg-bubble sera">iyaa. mulai dari Galeri, ya. cari foto yang paling kamu ingat. jangan asal pilih, Gaska.</div>');
     } else {
       ragu++;
       body.insertAdjacentHTML("beforeend",
-        '<div class="tg-bubble gaska">bentar, wallpaper HP kamu itu foto aku? terus ini sebenernya mau ngapain?</div>'+
-        '<div class="tg-bubble sera">hehe, berarti kamu nemu pesanku.</div>'+
-        '<div class="tg-bubble sera">aku punya permainan kecil buat kamu. aku pengin kamu nemuin aku lewat beberapa petunjuk. tenang, nggak susah-susah amat kok.</div>'+
-        '<div class="tg-bubble sera">ujung-ujungnya kamu tetap harus mulai dari galeri. pilih foto yang paling kamu ingat, ya.</div>');
+        '<div class="tg-bubble gaska">kenapa harus pake teka-teki segala?</div>'+
+        '<div class="tg-bubble sera">karena kalau aku kasih tahu langsung, kamu nggak bakal ngerasain serunya 😭</div>'+
+        '<div class="tg-bubble gaska">tunggu, wallpaper HP kamu foto aku juga? Sera, kenapa foto aku jadi wallpaper kamu?</div>'+
+        '<div class="tg-bubble sera">YA AMPUN kamu malah fokus ke situ 😭 fotonya bagus aja, udah jangan dibahas.</div>'+
+        '<div class="tg-bubble gaska">hmm mencurigakan sekali jawabanmu.</div>'+
+        '<div class="tg-bubble sera">terserah deh mau curiga apa. sekarang bantu aku satu hal dulu: ikutin petunjuk yang aku siapin.</div>'+
+        '<div class="tg-bubble gaska">mulai dari mana?</div>'+
+        '<div class="tg-bubble sera">dari Galeri. cari foto yang paling kamu ingat. nanti kamu bakal ngerti kenapa aku minta kamu nyari aku.</div>');
     }
     area.innerHTML =
-      '<div class="tg-prompt">Sera menyuruh Gaska membuka Galeri. Apa jawabannya?</div>'+
-      '<button class="tg-choice" id="tg-open-gallery-now">“Sebentar, aku buka dulu.”</button>'+
-      '<button class="tg-choice secondary" id="tg-ask-what">“Ada apasih? Ini mau ngapain?”</button>';
+      '<div class="tg-prompt">Gaska membalas Sera. Apa yang akan dia lakukan berikutnya?</div>'+
+      '<button class="tg-choice" id="tg-open-gallery-now">“Oke, aku buka Galeri dulu.”</button>'+
+      '<button class="tg-choice secondary" id="tg-ask-what">“Tunggu, kasih petunjuk sedikit dong.”</button>';
 
     function goToGallery(){
       area.innerHTML = '<div class="tg-prompt">Membuka Galeri…</div>';
@@ -1091,18 +1101,18 @@ document.querySelectorAll(".tg-choice[data-tg-choice]").forEach(btn=>{
       }, 2000);
     }
     $("tg-open-gallery-now").addEventListener("click", ()=>{
-      body.insertAdjacentHTML("beforeend", '<div class="tg-bubble gaska">sebentar, aku buka dulu.</div>');
+      body.insertAdjacentHTML("beforeend", '<div class="tg-bubble gaska">oke, aku buka Galeri dulu.</div>');
       body.scrollTop=body.scrollHeight;
       goToGallery();
     });
     $("tg-ask-what").addEventListener("click", ()=>{
       body.insertAdjacentHTML("beforeend",
-        '<div class="tg-bubble gaska">ada apasih? ini mau ngapain?</div>'+
-        '<div class="tg-bubble sera">aku cuma mau ngajak Gaska main riddle kecil. aku udah nyiapin petunjuk di HP ini, kamu tinggal ikutin satu-satu.</div>'+
-        '<div class="tg-bubble sera">nggak boleh langsung nyerah, ya. sekarang buka galeri dulu. dari situ baru kamu ngerti.</div>');
-      area.innerHTML = '<div class="tg-prompt">Pada akhirnya, Gaska tetap harus membuka Galeri.</div><button class="tg-choice" id="tg-open-gallery-after-explain">Oke, buka Galeri</button>';
+        '<div class="tg-bubble gaska">tunggu, kasih petunjuk sedikit dong.</div>'+
+        '<div class="tg-bubble sera">petunjuk pertama ada di Galeri. lihat fotonya baik-baik, terutama foto yang punya cerita buat kita berdua.</div>'+
+        '<div class="tg-bubble gaska">oke, itu lumayan membantu. aku cek sekarang.</div>');
+      area.innerHTML = '<div class="tg-prompt">Petunjuk pertama menunggu di Galeri.</div><button class="tg-choice" id="tg-open-gallery-after-explain">Buka Galeri</button>';
       $("tg-open-gallery-after-explain").addEventListener("click", ()=>{
-        body.insertAdjacentHTML("beforeend", '<div class="tg-bubble gaska">oke, aku buka galeri dulu.</div>');
+        body.insertAdjacentHTML("beforeend", '<div class="tg-bubble gaska">aku buka Galeri sekarang.</div>');
         body.scrollTop=body.scrollHeight;
         goToGallery();
       });
