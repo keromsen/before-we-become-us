@@ -1069,11 +1069,11 @@ function renderNativeApp(id){
  if(id==="safari"){
   root.innerHTML=status+`<div class="native-title">Safari</div><p class="native-subtitle">Ruang petunjuk Sera · bukan internet sungguhan</p>
   <div class="safari-tool-tabs" role="tablist">
-   <button class="safari-tool-tab active" type="button" data-safari-tab="keywords">🔑 Kata kunci</button>
+   <button class="safari-tool-tab active" type="button" data-safari-tab="readme">📖 Read me first</button>
    <button class="safari-tool-tab" type="button" data-safari-tab="hints">🧩 Petunjuk</button>
-   <button class="safari-tool-tab" type="button" data-safari-tab="readme">📖 Read me first</button>
+   <button class="safari-tool-tab" type="button" data-safari-tab="keywords">🔑 Kata kunci</button>
   </div>
-  <section class="safari-panel active" id="safari-panel-keywords">
+  <section class="safari-panel" id="safari-panel-keywords">
    <div class="safari-start"><b>Kata kunci</b><p style="font-size:12px;color:#777;line-height:1.55;margin-top:7px">Masukkan kata yang kamu simpulkan dari hal-hal yang kamu temukan di HP Sera. Setelah jawaban diterima, pilih respons Gaska. Pilihan akan membentuk arah cerita, tetapi hasilnya tidak langsung diberitahukan.</p></div>
    <form class="safari-search" id="safari-search-form"><span>🔎</span><input id="safari-query" placeholder="Masukkan kata kunci bab..." aria-label="Masukkan kata kunci bab"><button type="submit">Kirim</button></form>
    ${typeof storyProgressCard==="function"?storyProgressCard():""}
@@ -1084,18 +1084,11 @@ function renderNativeApp(id){
    <div class="safari-start"><b>Perjalanan bab</b><div id="safari-hint-list">${typeof storyHintList==="function"?storyHintList():""}</div></div>
   </section>
   <section class="safari-panel" id="safari-panel-readme">
-   <div class="safari-start"><b>READ ME FIRST 💌</b><p style="font-size:12px;color:#777;line-height:1.6;margin-top:8px">Hai, Gaska. Kalau kamu menemukan ini, berarti Sera memang menyiapkan sesuatu untukmu. Jangan buru-buru menebak ending—nikmati prosesnya.</p>
-   <ol class="safari-detail-list">
-    <li><b>Pesan & Telegram:</b> baca percakapan, perhatikan pilihan balasan, dan simpan detail yang terasa penting.</li>
-    <li><b>Catatan:</b> berisi hal yang Sera tulis, daftar rencana, serta petunjuk buku dan film.</li>
-    <li><b>Musik:</b> buka playlist Sera. Judul dan urutan lagu adalah bagian dari teka-teki.</li>
-    <li><b>Galeri:</b> foto terbuka sedikit demi sedikit. Baca caption/petunjuknya; cari detail yang diminta, lalu masukkan jawabannya di Safari.</li>
-    <li><b>Peta:</b> periksa tempat yang pernah kalian impikan dan detail yang tertulis di sana.</li>
-    <li><b>Telepon:</b> kalau panggilan masuk, terima untuk membaca dialog dan pilih jawaban Gaska. Pilihanmu memengaruhi ending.</li>
-    <li><b>Kata kunci:</b> masukkan jawaban bab satu per satu. Setelah tiap jawaban, pilih respons Gaska. Tiap pilihan bernilai satu poin ke salah satu ending.</li>
-    <li><b>Petunjuk:</b> kalau bingung, buka tab ini. Setiap bab memberi nama aplikasi, apa yang harus dicari, dan apa yang harus diketik.</li>
-   </ol>
-   <p style="font-size:12px;color:#6b5b79;line-height:1.6;margin-top:10px"><b>Tujuanmu:</b> ikuti jejak Sera dengan caramu sendiri. Tidak semua jawaban ditulis secara gamblang; beberapa harus disimpulkan dari detail yang kamu temukan di berbagai aplikasi.</p></div>
+   <div class="safari-start"><b>READ ME FIRST 💌</b><p style="font-size:13px;color:#62596b;line-height:1.8;margin-top:10px">Hai, kamu. Kalau kamu sudah sampai di halaman ini, berarti kamu benar-benar membuka HP-ku. Aku tidak tahu apakah kamu akan langsung mengerti kenapa aku meninggalkan begitu banyak hal kecil di sini, jadi aku cuma mau bilang: jangan buru-buru menutupnya.</p>
+   <p style="font-size:13px;color:#62596b;line-height:1.8;margin-top:10px">Coba mulai dari percakapan yang muncul, lalu kembali ke sini kalau kamu tidak tahu harus ke mana. Di tab <b>Petunjuk</b>, aku meninggalkan satu pertanyaan dan nama aplikasi yang bisa kamu buka. Jawabannya tidak selalu tertulis jelas; kadang kamu harus mengingat sesuatu, membaca catatan lama, atau memperhatikan detail yang kelihatannya sepele.</p>
+   <p style="font-size:13px;color:#62596b;line-height:1.8;margin-top:10px">Tab <b>Kata kunci</b> adalah tempat kamu mencoba jawabanmu. Kalau terasa cocok, aku akan membiarkanmu melanjutkan. Kalau belum, tidak apa-apa—kamu bisa membaca lagi, membuka aplikasi lain, lalu mencoba sekali lagi. Beberapa jawaban punya makna yang berbeda, jadi pilihlah dengan perasaanmu sendiri, bukan cuma karena ingin cepat selesai.</p>
+   <p style="font-size:13px;color:#62596b;line-height:1.8;margin-top:10px">Pesan, Catatan, Musik, Galeri, Peta, dan Telepon masing-masing menyimpan bagian kecil dari cerita. Tidak semua hal penting terlihat seperti petunjuk. Kadang sebuah kalimat biasa justru lebih sulit dilupakan daripada sesuatu yang sengaja dibuat dramatis.</p>
+   <p style="font-size:13px;color:#62596b;line-height:1.8;margin-top:10px">Aku tidak akan memaksamu menemukan arti yang sama denganku. Aku cuma ingin tahu apa yang kamu ingat, apa yang kamu pilih, dan apa yang kamu rasakan setelah melihat semuanya. — Sera</p></div>
   </section>
   <div class="native-homebar"></div>`;
   root.querySelectorAll("[data-safari-tab]").forEach(btn=>btn.addEventListener("click",()=>{
@@ -1105,15 +1098,23 @@ function renderNativeApp(id){
   }));
   $("safari-search-form").addEventListener("submit",e=>{e.preventDefault();const q=$("safari-query").value.trim();if(!q)return;if(typeof maybeHandleStorySearch==="function"){try{maybeHandleStorySearch(q);}finally{$("safari-query").value="";}refreshSafariQuest();refreshSafariHints();}});
  } else if(id==="catatan"){
-  root.innerHTML=status+`<div class="notes-screen"><div class="native-title">Catatan</div><p class="native-subtitle">Semua catatan · di iPhone ini</p><div class="notes-group">Hari ini</div><article class="note-card note-open-card" data-note="todo"><h3>To-do hari ini ☁️</h3><p>□ Selesaikan tugas kelompok · Beli kopi · Balas chat grup kelas…</p><div class="note-meta">07.15 · Ketuk untuk membuka</div></article><article class="note-card note-open-card" data-note="ingat"><h3>Hal kecil yang harus diingat</h3><p>Charger di tas. Buku di meja. Jangan lupa bawa payung…</p><div class="note-meta">Kemarin · Ketuk untuk membuka</div></article><div class="notes-group">Catatan pribadi</div><article class="note-card note-open-card" data-note="film"><h3>Film yang mau ditonton 🎬</h3><p>Interstellar, rekomendasi teman, dan jadwal yang cocok…</p><div class="note-meta">Senin · Ketuk untuk membuka</div></article><div class="notes-group">Surat yang tidak pernah dikirim</div><article class="letter-card note-open-card" data-note="surat1"><span class="letter-seal">✉️</span><h3>Untuk Gaska — kalau suatu hari aku berani</h3><p>Ada hal yang selalu ingin Sera katakan.</p><div class="letter-lock" data-letter-lock="surat1">🔒 Belum bisa dibuka</div></article><article class="letter-card note-open-card" data-note="surat2"><span class="letter-seal">💌</span><h3>Untuk Gaska, tentang hari itu</h3><p>Disimpan sebagai draf.</p><div class="letter-lock" data-letter-lock="surat2">🔒 Akan terbuka sesuai alur cerita</div></article><p class="native-note-hint">Ketuk catatan biasa untuk membaca isinya. Dua surat pribadi akan muncul saat Sera merasa waktunya tepat.</p><div class="native-homebar"></div></div>`;
+  root.innerHTML=status+`<div class="notes-screen"><div class="native-title">Catatan</div><p class="native-subtitle">Semua catatan · di iPhone ini</p><div class="notes-group">Hari ini</div><article class="note-card note-open-card" data-note="todo"><h3>To-do hari ini ☁️</h3><p>□ Selesaikan tugas kelompok · Beli kopi · Balas chat grup kelas…</p><div class="note-meta">07.15 · Ketuk untuk membuka</div></article><article class="note-card note-open-card" data-note="ingat"><h3>Hal kecil yang harus diingat</h3><p>Charger di tas. Buku di meja. Jangan lupa bawa payung…</p><div class="note-meta">Kemarin · Ketuk untuk membuka</div></article><div class="notes-group">Catatan pribadi</div><article class="note-card note-open-card" data-note="buku"><h3>Catatan di pinggir buku 📚</h3><p>UTOPIA · Norris Classics · halaman yang bikin penasaran…</p><div class="note-meta">Kemarin malam · Ketuk untuk membuka</div></article><article class="note-card note-open-card" data-note="pubg"><h3>Obrolan soal game 🎮</h3><p>Aku masih belum paham kenapa Gaska hafal detail kecil dari tiap pertandingan…</p><div class="note-meta">Senin · Ketuk untuk membuka</div></article><article class="note-card note-open-card" data-note="film"><h3>Film yang masih kupikirkan 🎬</h3><p>Interstellar dan obrolan yang rasanya belum selesai…</p><div class="note-meta">Senin · Ketuk untuk membuka</div></article><article class="note-card note-open-card" data-note="space"><h3>Hal-hal di luar sana 🌌</h3><p>Catatan kecil dari cerita Gaska tentang langit…</p><div class="note-meta">Minggu · Ketuk untuk membuka</div></article><article class="note-card note-open-card" data-note="food"><h3>Hal yang bikin nyaman 🍲</h3><p>Katanya, makanan sederhana kadang bisa memperbaiki hari…</p><div class="note-meta">Minggu · Ketuk untuk membuka</div></article><article class="note-card note-open-card" data-note="places"><h3>Tempat yang pernah dibayangkan ✈️</h3><p>Dua tempat jauh yang pernah muncul dalam obrolan…</p><div class="note-meta">Minggu · Ketuk untuk membuka</div></article><article class="note-card note-open-card" data-note="playlist"><h3>Catatan untuk playlist 🎧</h3><p>Ada lagu yang selalu terasa berbeda kalau didengarkan di waktu tertentu…</p><div class="note-meta">Sabtu · Ketuk untuk membuka</div></article><article class="note-card note-open-card" data-note="coffee"><h3>Kedai kopi kecil ☕</h3><p>Entah kenapa, membayangkan duduk lama sambil ngobrol terdengar menyenangkan…</p><div class="note-meta">Sabtu · Ketuk untuk membuka</div></article><article class="note-card note-open-card" data-note="ducks"><h3>Ide paling tidak masuk akal 🦆</h3><p>Aku pernah menulis sesuatu yang mungkin akan membuat Gaska tertawa…</p><div class="note-meta">Jumat · Ketuk untuk membuka</div></article><div class="notes-group">Surat yang tidak pernah dikirim</div><article class="letter-card note-open-card" data-note="surat1"><span class="letter-seal">✉️</span><h3>Untuk Gaska — kalau suatu hari aku berani</h3><p>Ada hal yang selalu ingin Sera katakan.</p><div class="letter-lock" data-letter-lock="surat1">🔒 Belum bisa dibuka</div></article><article class="letter-card note-open-card" data-note="surat2"><span class="letter-seal">💌</span><h3>Untuk Gaska, tentang hari itu</h3><p>Disimpan sebagai draf.</p><div class="letter-lock" data-letter-lock="surat2">🔒 Akan terbuka sesuai alur cerita</div></article><p class="native-note-hint">Ketuk catatan biasa untuk membaca isinya. Dua surat pribadi akan muncul saat Sera merasa waktunya tepat.</p><div class="native-homebar"></div></div>`;
   const letter1Lock=root.querySelector('[data-letter-lock="surat1"]');
   const letter2Lock=root.querySelector('[data-letter-lock="surat2"]');
   if(letter1Lock&&storyStage>=9)letter1Lock.textContent="🔓 Terbuka · ketuk untuk membaca";
   if(letter2Lock&&storyStage>=16)letter2Lock.textContent="🔓 Terbuka · ketuk untuk membaca";
   const noteDetails={
-   todo:{title:"To-do hari ini ☁️",body:"□ Selesaikan tugas kelompok\n□ Beli kopi sebelum kelas\n□ Balas chat grup kelas\n□ Cari film yang bisa ditonton akhir pekan\n□ Beli kopi favorit\n□ Jangan lupa makan siang\n\nAku masih tertawa waktu Gaska menjelaskan aturan squad di game favoritnya. Katanya, kalau mau main bareng teman-teman, satu tim punya batas jumlah pemain. Aku lupa angkanya dan malu kalau harus tanya lagi. Mungkin dia akan ingat kalau melihat pertanyaan ini.\n\nBuku UTOPIA, edisi Norris Classics, masih ada di meja. Kemarin aku sempat membuka halaman 120, tetapi menutupnya lagi karena takut mengacak-acak urutannya. Aku penasaran apakah Gaska masih ingat kata pertama di halaman itu.\n\nKalau sedang mendengarkan lagu, coba perhatikan bagian sekitar menit 2:30 dari salah satu lagu yang tersimpan di playlist. Aku tidak menulis liriknya di sini; aku cuma ingin tahu apakah Gaska masih ingat bagian yang pernah kami dengarkan bersama.",meta:"07.15 · Catatan pribadi"},
-   ingat:{title:"Hal kecil yang harus diingat",body:"Charger di tas. Buku di meja. Jangan lupa bawa payung—langit kelihatan mendung.\n\nDan jangan lupa mengembalikan buku Gaska.",meta:"Kemarin · Catatan pribadi"},
-   film:{title:"Film yang mau ditonton 🎬",body:"• Interstellar — sudah kami tonton bareng, tetapi obrolan tentang ruang angkasa tidak pernah selesai dalam satu malam.\n• Cari film yang cocok ditonton akhir pekan. Kalau Gaska mulai menjelaskan teori, siapkan kopi karena biasanya bakal lama.\n• Jangan lupa beli kopi sebelum pulang.\n\nAku lihat bukunya masih ada di meja. UTOPIA, edisi Norris Classics. Kemarin aku sempat membuka beberapa halaman saat menunggu, lalu menutupnya lagi karena takut mengacak-acak urutannya. Aku penasaran apa yang ada di halaman 120, tetapi lebih penasaran apakah Gaska masih ingat kata pertama di halaman itu.\n\nDia juga cerita soal PUBG. Aku bukan pemain yang hebat, jadi aku cuma ingat aturan dasar ketika satu tim turun bersama. Tapi jangan tanya aku soal strategi, aku pasti salah jawab.\n\nTempat yang pernah kami bayangkan: Swiss atau Edinburgh. Lagu-lagu di playlist juga menyimpan cerita masing-masing. Pernah ada satu lagu yang kami dengar sambil membahas hal yang sulit dijelaskan; coba perhatikan bagian sekitar menit 2:30 kalau kamu memutarnya sendiri.\n\nAda banyak detail kecil tentang seseorang yang baru terasa penting setelah kita mulai merindukannya.",meta:"Senin · Catatan pribadi"}
+   todo:{title:"To-do hari ini ☁️",body:"□ Selesaikan tugas kelompok\n□ Beli kopi sebelum kelas\n□ Balas chat grup kelas\n□ Cari waktu untuk istirahat\n□ Pastikan buku tidak tertinggal\n□ Isi daya ponsel sebelum pulang",meta:"07.15 · Catatan harian"},
+   ingat:{title:"Hal kecil yang harus diingat",body:"Charger di tas. Buku di meja. Jangan lupa bawa payung—langit kelihatan mendung.\n\nAku harus mengembalikan buku yang kupinjam. Ada beberapa halaman yang sempat kubaca sambil menunggu, tapi aku tidak mau melipat sudutnya. Gaska pasti protes kalau bukunya jadi berantakan.",meta:"Kemarin · Catatan pribadi"},
+   buku:{title:"Catatan di pinggir buku 📚",body:"UTOPIA — edisi Norris Classics. Aku mulai membaca beberapa halaman waktu menunggu Gaska selesai dengan urusannya. Ada sesuatu yang menyenangkan dari membaca buku yang sama dengan seseorang; rasanya selalu ada hal kecil yang bisa dibicarakan setelahnya.\n\nAku sempat berhenti di halaman 120. Tidak ada alasan khusus, hanya penasaran apakah Gaska masih ingat bagian yang sedang ia baca. Aku tidak menulis jawabannya di sini. Lebih seru kalau dia membuka bukunya sendiri dan melihat apa yang pertama kali menarik matanya.\n\nJangan sampai aku lupa mengembalikannya ke tempat semula.",meta:"Kemarin malam · Draf pribadi"},
+   pubg:{title:"Obrolan soal game 🎮",body:"Gaska cerita lagi soal PUBG. Aku tidak selalu paham istilah yang dia pakai, tapi aku suka cara dia menjelaskan sesuatu yang dia senangi. Bahkan hal sederhana seperti menyusun tim bisa terdengar serius kalau dia yang bercerita.\n\nAku cuma ingat kalau ada batas jumlah orang dalam satu squad. Waktu itu aku sempat menebak asal-asalan dan dia langsung ketawa. Aku harusnya mendengarkan lebih baik, bukan malah sibuk memperhatikan ekspresinya.\n\nMungkin suatu hari aku bisa ikut main tanpa membuat timnya repot.",meta:"Senin · Catatan pribadi"},
+   film:{title:"Film yang masih kupikirkan 🎬",body:"Interstellar. Aku masih ingat betapa semangatnya Gaska saat menjelaskan teori di balik film itu. Awalnya aku cuma ingin menonton film yang bagus, tetapi akhirnya kami malah membicarakan waktu, jarak, dan hal-hal yang belum tentu bisa dijelaskan dengan mudah.\n\nAku suka saat dia lupa waktu karena sedang bercerita. Aku bisa saja tidak memahami semua teorinya, tetapi mendengarkan dia menjelaskan sesuatu yang dia sukai sudah cukup membuat malam terasa menyenangkan.\n\nKalau kami menonton film lain, aku ingin duduk di sebelahnya lagi. Kedengarannya sederhana, ya?",meta:"Senin · Catatan pribadi"},
+   space:{title:"Hal-hal di luar sana 🌌",body:"Kadang Gaska bicara tentang planet, galaksi, dan betapa kecilnya kita dibandingkan semesta. Aku tidak selalu bisa mengikuti semuanya, tetapi aku suka saat dia menghubungkan satu teori dengan teori lain seolah semua hal punya benang merah.\n\nSetelah menonton Interstellar, aku jadi mengerti sedikit kenapa dia menyukai topik itu. Bukan cuma soal luar angkasa, mungkin juga soal kemungkinan-kemungkinan yang belum kita ketahui.\n\nAku penasaran apa yang akan dia ceritakan kalau suatu hari kami bisa melihat langit malam jauh dari lampu kota.",meta:"Minggu · Catatan pribadi"},
+   food:{title:"Hal yang bikin nyaman 🍲",body:"Gaska pernah bilang ada makanan yang selalu terasa pas saat hari sedang melelahkan. Aku tidak yakin bisa membuatnya sendiri dengan benar, jadi aku menyimpan nama hidangannya supaya tidak lupa. Yang kuingat, ada tahu lembut dan kuah hangat.\n\nAneh juga, ya, bagaimana kita bisa mengingat hal sekecil makanan favorit seseorang. Tapi mungkin perhatian memang sering muncul dari hal yang sederhana—mengingat apa yang dia suka, lalu berharap suatu hari bisa menyiapkannya tanpa perlu bertanya lagi.",meta:"Minggu · Catatan pribadi"},
+   places:{title:"Tempat yang pernah dibayangkan ✈️",body:"Ada dua tempat yang pernah muncul dalam obrolan kami. Satu terkenal dengan pegunungan dan danau yang terlihat seperti kartu pos; satu lagi kota tua di Skotlandia dengan kastil, jalan batu, dan langit yang sering kelabu.\n\nAku tidak tahu kapan kami bisa pergi ke sana, atau apakah rencana seperti itu akan benar-benar terjadi. Untuk sekarang, rasanya cukup menyenangkan membayangkannya sambil membuka peta. Kalau suatu hari kami sampai di salah satunya, aku ingin berjalan tanpa buru-buru dan berhenti di kedai kecil yang menjual kopi.",meta:"Minggu · Catatan pribadi"},
+   playlist:{title:"Catatan untuk playlist 🎧",body:"Aku menyusun lagu-lagu ini tanpa urutan yang benar-benar masuk akal. Ada yang mengingatkanku pada obrolan ringan, ada yang terasa terlalu jujur untuk didengarkan saat sedang sendirian. Lagu ketiga selalu membuatku diam sebentar sebelum menekan tombol berikutnya.\n\nKalau Gaska mendengarkan playlist ini, mungkin dia akan mengenali beberapa judul. Tapi ada hal lain yang bisa diingat selain judul: bagian lagu yang pernah kami dengarkan bersama, dan apa yang sedang kami bicarakan waktu itu. Aku tidak menulis liriknya di sini. Kalau dia penasaran, biarkan dia memutarnya dan mendengarkan sendiri.",meta:"Sabtu · Catatan pribadi"},
+   coffee:{title:"Kedai kopi kecil ☕",body:"Aku suka membayangkan duduk di kedai kopi kecil, jauh dari keramaian, tanpa harus mengecek waktu setiap beberapa menit. Gaska bisa bercerita tentang film atau hal-hal di langit, dan aku bisa bertanya sampai dia menyadari kami sudah terlalu lama duduk di sana.\n\nMungkin tempat itu ada di Swiss, mungkin di Edinburgh, atau mungkin cuma kedai kecil dekat tempat kami tinggal sekarang. Sepertinya yang penting bukan tempatnya. Aku cuma ingin ada alasan untuk duduk lebih lama dan tidak buru-buru pulang.",meta:"Sabtu · Catatan pribadi"},
+   ducks:{title:"Ide paling tidak masuk akal 🦆",body:"Aku pernah punya ide yang benar-benar konyol: kalau bisa memilih kehidupan lain, aku ingin menjadi bebek yang selalu berjalan berpasangan. Jangan tanya kenapa. Mungkin karena mereka kelihatan santai dan tidak terlalu memikirkan apa-apa.\n\nKalau dipikir lagi, ide itu akan lebih lucu kalau ada seseorang yang mau ikut jadi bebek juga. Aku pasti akan menertawakan diri sendiri kalau Gaska membaca catatan ini. Jadi, kalau kamu benar-benar menemukannya, jangan terlalu keras menertawakanku, ya.",meta:"Jumat · Catatan pribadi"}
   };
   root.querySelectorAll("[data-note]").forEach(card=>card.addEventListener("click",()=>{
    const key=card.dataset.note;
@@ -1260,8 +1261,8 @@ document.querySelectorAll(".tg-choice[data-tg-choice]").forEach(btn=>{
       '<button class="tg-choice" id="tg-open-gallery-now">“Oke, aku buka Safari dulu.”</button>'+
       '<button class="tg-choice secondary" id="tg-ask-what">“Tunggu, kasih petunjuk sedikit dong.”</button>';
 
-    function goToGallery(){
-      area.innerHTML = '<div class="tg-prompt">Membuka Galeri…</div>';
+    function goToSafari(){
+      area.innerHTML = '<div class="tg-prompt">Membuka Safari…</div>'; 
       setTimeout(()=>{
         closeTelegram();
         const safari = CONFIG.apps.find(a=>a.id==="safari");
@@ -1272,7 +1273,7 @@ document.querySelectorAll(".tg-choice[data-tg-choice]").forEach(btn=>{
     $("tg-open-gallery-now").addEventListener("click", ()=>{
       body.insertAdjacentHTML("beforeend", '<div class="tg-bubble gaska">oke, aku buka Safari dulu.</div>');
       body.scrollTop=body.scrollHeight;
-      goToGallery();
+      goToSafari();
     });
     $("tg-ask-what").addEventListener("click", ()=>{
       body.insertAdjacentHTML("beforeend",
@@ -1281,9 +1282,9 @@ document.querySelectorAll(".tg-choice[data-tg-choice]").forEach(btn=>{
         '<div class="tg-bubble gaska">oke, itu lumayan membantu. aku cek sekarang.</div>');
       area.innerHTML = '<div class="tg-prompt">Petunjuk pertama menunggu di Safari.</div><button class="tg-choice" id="tg-open-gallery-after-explain">Buka Safari</button>';
       $("tg-open-gallery-after-explain").addEventListener("click", ()=>{
-        body.insertAdjacentHTML("beforeend", '<div class="tg-bubble gaska">aku buka Galeri sekarang.</div>');
+        body.insertAdjacentHTML("beforeend", '<div class="tg-bubble gaska">aku buka Safari sekarang.</div>');
         body.scrollTop=body.scrollHeight;
-        goToGallery();
+        goToSafari();
       });
       body.scrollTop=body.scrollHeight;
     });
@@ -1441,12 +1442,12 @@ const storyRiddles=[
  {title:"Bab 17 · Tempat untuk berhenti sebentar",clue:"Sebelum petunjuk terakhir, pikirkan minuman yang kalian suka pesan saat duduk lama dan bicara tentang film, sekolah, atau masa depan. Jawab dengan satu kata dalam bahasa Indonesia.",answer:["kopi"],success:"Kopi. Ada notifikasi baru dari Sera. Dia ingin menelepon, tapi kali ini Gaska yang harus memilih apa yang akan ia katakan.",hint:"Periksa pesan Kirana dan catatan to-do Sera."},
  {title:"Bab 18 · Dua bebek kecil",clue:"Di antara semua cita-cita serius, Sera pernah punya cita-cita yang terdengar sangat tidak serius: menjadi pasangan hewan yang suka berjalan beriringan dan berbunyi 'wek wek'. Apa hewannya?",answer:["bebek","pasangan bebek"],success:"Bebek. Sera tidak bisa berhenti tertawa ketika mengingatnya. 'Kamu ingat hal-hal aneh tentang aku juga, ya?' Semua potongan kenangan kini sudah terbuka.",hint:"Baca ulang pesan Kirana dan catatan Sera. Jawabannya sengaja lucu."}
 ];
-try{storyStage=Math.max(0,Math.min(18,Number(localStorage.getItem("sera-story-stage-v4")||0)));}catch(e){}
+try{storyStage=Math.max(0,Math.min(18,Number(localStorage.getItem("sera-story-stage-v7")||0)));}catch(e){}
 
 let storyRouteScore=0, storyChoiceCount=0, storyChoicePending=false, storyRouteReady=false;
 try{
- storyRouteScore=Number(localStorage.getItem("sera-route-score-v4")||0);
- storyChoiceCount=Math.max(0,Math.min(18,Number(localStorage.getItem("sera-route-count-v4")||0)));
+ storyRouteScore=Number(localStorage.getItem("sera-route-score-v7")||0);
+ storyChoiceCount=Math.max(0,Math.min(18,Number(localStorage.getItem("sera-route-count-v7")||0)));
  storyRouteReady=storyChoiceCount>=18 && storyStage>=18;
 }catch(e){}
 const storyGuides=[
@@ -1469,21 +1470,62 @@ const storyGuides=[
  {app:"Pesan + Catatan",task:"Baca chat Kirana dan daftar to-do Sera. Cari minuman yang sering kalian pesan saat ngobrol lama.",next:"Bab terakhir ada di Pesan dan Catatan pribadi. Cari cita-cita Sera yang paling konyol."},
  {app:"Pesan + Catatan",task:"Baca ulang percakapan Kirana dan catatan Sera. Hewan apa yang ingin Sera jadikan pasangan hidup? Ketik nama hewannya.",next:"Setelah bab terakhir, pilih respons Gaska untuk menghitung ending. Buka Kata kunci lagi."}
 ];
+const storyAltAnswers=[
+ ["utopia","norris classics"],
+ ["space-time","ruang angkasa"],
+ ["black hole","lubang hitam"],
+ ["squad","tim"],
+ ["tofu","tahu"],
+ ["switzerland","skotlandia"],
+ ["one night","malam"],
+ ["stupid","song"],
+ ["falling in love","love"],
+ ["dunia","tipu tipu"],
+ ["terindah","anugerah"],
+ ["kiss me","kiss"],
+ ["young","masa muda"],
+ ["cure","healing"],
+ ["wali","tomat"],
+ ["light","cahaya"],
+ ["coffee","kedai kopi"],
+ ["duck","ducks"]
+];
+const storyPromptText=[
+ "Ada buku yang masih menemanimu belakangan ini. Di halaman yang pernah kubuka, kata mana yang paling menarik matamu?",
+ "Malam itu, yang tertinggal di kepalaku bukan cuma gambar di layar. Kalau harus menyebut satu hal yang paling kamu ingat, apa itu?",
+ "Saat kamu mulai bercerita tentang langit, aku sering kehilangan jejak istilahnya. Dari semua hal yang jauh di atas kita, mana yang paling ingin kamu jelaskan lagi?",
+ "Aku masih ingat kamu menjelaskan cara teman-temanmu masuk ke satu pertandingan. Kalau harus menyebut hal paling penting saat bermain bersama, apa yang muncul duluan?",
+ "Aku pernah mendengar kamu menyebut sesuatu yang bisa membuat hari melelahkan terasa sedikit lebih baik. Apa yang terlintas saat kamu membayangkan semangkuk makanan hangat?",
+ "Kita pernah membicarakan tempat yang terasa jauh dari rutinitas. Kalau kamu hanya bisa menyimpan satu nama dari obrolan itu, nama apa yang akan kamu pilih?",
+ "Ada satu lagu yang judulnya terdengar seperti ingin mengulang waktu. Kalau kamu mengingat malam yang ingin kamu simpan lebih lama, kata apa yang muncul?",
+ "Ada lagu yang terdengar sederhana, tetapi rasanya sedikit memalukan saat cocok dengan perasaan sendiri. Apa yang akan kamu sebut untuk menggambarkannya?",
+ "Aku tidak pernah bisa memutuskan apakah lagu ini terdengar seperti janji atau pengakuan. Bagian mana dari judulnya yang paling kamu ingat?",
+ "Kadang dunia terasa ramai dan membingungkan, tetapi satu percakapan bisa membuat semuanya terasa lebih jujur. Kata apa yang kamu simpan dari lagu itu?",
+ "Ada judul yang terdengar seperti ucapan terima kasih kepada seseorang yang berarti. Kalau kamu hanya menyimpan satu bagian dari judul itu, bagian mana?",
+ "Judul lagu ini seperti permintaan yang diulang karena satu kali saja belum cukup. Kata apa yang paling tertinggal di kepalamu?",
+ "Aku suka saat kamu membicarakan masa depan seolah masih banyak kemungkinan. Satu kata apa yang paling cocok untuk masa seperti itu?",
+ "Kadang seseorang tidak benar-benar menyelesaikan masalah kita, tetapi kehadirannya membuat hari terasa lebih ringan. Apa kata yang kamu ingat dari lagu itu?",
+ "Ada judul lagu yang bentuknya seperti kata pendek sehari-hari, tetapi tetap terasa aneh di tengah playlist ini. Apa yang kamu ingat?",
+ "Lagu yang satu ini terasa seperti sesuatu yang datang setelah malam panjang. Kalau kamu tidak menyebut judulnya, kata apa yang akan kamu pilih untuk menggambarkannya?",
+ "Ada minuman yang sering menemani obrolan panjang kita. Tapi kalau bukan minumannya, mungkin yang kamu ingat justru tempat dan suasananya. Apa yang kamu simpan?",
+ "Aku pernah menulis satu impian yang konyol. Kalau kamu membayangkan dua makhluk kecil berjalan beriringan, apa yang pertama terlintas?"
+];
 function normalizeStoryAnswer(q){return q.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[’']/g,"'").replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();}
 function storyProgressCard(){
  if(storyStage>=18){
-  return `<div class="safari-start story-quest-card" style="margin-top:12px;border:1px solid #ded4ec"><b>Sepertinya kamu sudah menemukan banyak hal ✨</b><p style="font-size:12px;line-height:1.6;margin-top:7px">Baca kembali percakapan, catatan, dan pilihan yang pernah kamu ambil. Coba masukkan kata yang paling mewakili hubungan kalian.</p></div>`;
+  return `<div class="safari-start story-quest-card" style="margin-top:12px;border:1px solid #ded4ec"><b>Ada sesuatu yang tertinggal di antara semua jejak ini ✨</b><p style="font-size:12px;line-height:1.6;margin-top:7px">Coba ingat lagi hal-hal yang paling sering kamu dan aku bicarakan. Ada satu kata yang terasa lebih dekat daripada yang lain.</p></div>`;
  }
- const r=storyRiddles[Math.min(storyStage,17)],g=storyGuides[Math.min(storyStage,17)];
- return `<div class="safari-start story-quest-card" style="margin-top:12px;border:1px solid #ded4ec"><div style="font-size:10px;letter-spacing:1.2px;color:#9277a5;font-weight:800">BEFORE WE BECAME US · PETUNJUK BERIKUTNYA</div><b style="display:block;margin-top:7px">${r.title}</b><span class="story-app-chip">BUKA APLIKASI: ${g.app}</span><p style="font-size:12px;color:#686070;line-height:1.6;margin-top:7px">${r.clue}</p><details style="margin-top:9px;font-size:11px;color:#81758b"><summary style="cursor:pointer;font-weight:700">Sedikit lagi kalau buntu</summary><p style="line-height:1.5;margin-top:7px">${r.hint}</p></details><p class="story-score-note">Petunjuk ditemukan: ${storyStage} · Foto terbuka: ${Math.min(seraPhotos.length,4+Math.floor(storyStage*25/18))}/${seraPhotos.length}</p></div>`;
+ const g=storyGuides[Math.min(storyStage,17)];
+ return `<div class="safari-start story-quest-card" style="margin-top:12px;border:1px solid #ded4ec"><div style="font-size:10px;letter-spacing:1.2px;color:#9277a5;font-weight:800">CATATAN KECIL DARI SERA</div><b style="display:block;margin-top:7px">${g.app}</b><span class="story-app-chip">Aplikasi: ${g.app}</span><p style="font-size:12px;color:#686070;line-height:1.7;margin-top:9px"><b>Pertanyaan:</b> ${storyPromptText[storyStage]}</p></div>`;
 }
 function storyHintPanel(){
- if(storyStage>=18)return `<p style="font-size:12px;line-height:1.6">Semua bab selesai. Buka tab <b>Kata kunci</b> untuk melihat kata kunci utama hasil pilihanmu.</p>`;
- const r=storyRiddles[storyStage],g=storyGuides[storyStage];
- return `<div class="story-app-chip">MULAI DARI: ${g.app}</div><p style="font-size:12px;line-height:1.6;color:#555"><b>${r.title}</b><br>${r.clue}</p><details style="margin-top:8px"><summary style="font-size:11px;cursor:pointer">Kalau benar-benar buntu</summary><p style="font-size:12px;line-height:1.6;color:#776986">${r.hint}</p></details>`;
+ if(storyStage>=18)return `<p style="font-size:12px;line-height:1.7">Aku rasa kamu sudah menemukan cukup banyak hal. Coba kembali ke Kata kunci dan pikirkan apa yang paling kamu ingat dari semua ini.</p>`;
+ const g=storyGuides[storyStage];
+ return `<div class="story-app-chip">Aplikasi: ${g.app}</div><p style="font-size:12px;line-height:1.75;color:#555;margin-top:9px"><b>Pertanyaan:</b> ${storyPromptText[storyStage]}</p><details style="margin-top:10px"><summary style="font-size:11px;cursor:pointer">Catatan kecil dari Sera</summary><p style="font-size:12px;line-height:1.65;color:#776986;margin-top:7px">Coba lihat hal yang paling kamu ingat dari obrolan kita. Aku sengaja tidak menuliskan jawabannya di sini—aku ingin kamu menemukannya sendiri.</p></details>`;
 }
 function storyHintList(){
- return `<p style="font-size:12px;line-height:1.6;color:#777">Jejak lama tetap ada di aplikasi yang pernah kamu buka. Untuk sekarang, cukup ikuti rasa penasaranmu dan cari detail yang paling masuk akal.</p>`;
+ if(storyStage===0)return `<p style="font-size:12px;line-height:1.7;color:#777">Aku akan meninggalkan pertanyaan yang berbeda setiap kali kamu melangkah lebih jauh. Untuk sekarang, cukup buka aplikasi yang tertulis dan lihat apa yang terasa familiar.</p>`;
+ return `<p style="font-size:12px;line-height:1.7;color:#777">Jejak yang sudah kamu lewati tidak hilang. Kalau ada sesuatu yang terasa janggal, kamu boleh kembali ke aplikasi sebelumnya dan membaca ulang.</p>`;
 }
 function refreshSafariHints(){
  const current=$("safari-hint-current"),list=$("safari-hint-list");
@@ -1515,7 +1557,7 @@ function showStoryChoice(){
   storyChoiceCount=Math.min(18,storyChoiceCount+1);
   if(btn.dataset.route==="hope")storyRouteScore+=1;
   else storyRouteScore-=1;
-  try{localStorage.setItem("sera-route-score-v4",String(storyRouteScore));localStorage.setItem("sera-route-count-v4",String(storyChoiceCount));}catch(e){}
+  try{localStorage.setItem("sera-route-score-v7",String(storyRouteScore));localStorage.setItem("sera-route-count-v7",String(storyChoiceCount));}catch(e){}
   progressStory();
   const oldNote=root.querySelector(".safari-result-note");if(oldNote)oldNote.remove();
   if(storyStage>=18){
@@ -1532,7 +1574,7 @@ function progressStory(){
  if(storyStage>=18)return;
  const finished=storyRiddles[storyStage];
  storyStage=Math.min(storyStage+1,18);
- try{localStorage.setItem("sera-story-stage-v4",String(storyStage));}catch(e){}
+ try{localStorage.setItem("sera-story-stage-v7",String(storyStage));}catch(e){}
  refreshSeraGallery();refreshSafariQuest();
  if(storyStage===3&&!storyCallSeen.sera){storyCallSeen.sera=true;setTimeout(()=>triggerStoryCall("sera"),1200);}
  if(storyStage===6&&!storyCallSeen.gaska){storyCallSeen.gaska=true;setTimeout(()=>toast("Pengingat · Kalau ingin bertanya, buka Telepon lalu hubungi Sera."),1200);}
@@ -1540,23 +1582,28 @@ function progressStory(){
 }
 function maybeHandleStorySearch(input){
  const q=normalizeStoryAnswer(input);
- if(storyChoicePending){showStorySearchResult("Pilih respons dulu","Pilih salah satu respons Gaska di bawah jawaban benar sebelum melanjutkan ke bab berikutnya.");return true;}
+ if(storyChoicePending){showStorySearchResult("Pilih respons dulu","Pilih salah satu responsku di bawah ini sebelum melanjutkan.");return true;}
  if(q==="just friends"||q==="friends only"||q==="teman saja"||q==="daylight"||q==="taylor swift daylight"){
-  if(storyStage<18||storyChoiceCount<18){showStorySearchResult("Kata kunci ending masih terkunci","Masih ada bagian cerita yang belum selesai. Teruskan dulu dari petunjuk yang sedang terbuka.");return true;}
+  if(storyStage<18||storyChoiceCount<18){showStorySearchResult("Belum waktunya","Masih ada hal yang ingin kutinggalkan untukmu. Lanjutkan dulu dari pertanyaan yang sedang terbuka.");return true;}
   const route=storyRouteScore>0?"daylight":"just friends";
-  if(q!==normalizeStoryAnswer(route)){showStorySearchResult("Belum terbuka","Kata itu terasa dekat, tetapi belum sesuai dengan jalan yang kamu pilih. Coba pikirkan lagi percakapan dan pilihanmu.");return true;}
+  if(q!==normalizeStoryAnswer(route)){showStorySearchResult("Belum cocok","Kata itu terasa dekat, tetapi belum sejalan dengan pilihan-pilihan yang kamu buat. Coba ingat lagi apa yang paling sering kamu pilih.");return true;}
   showStoryEnding(route==="daylight"?"happy":"bad");return true;
  }
  if(storyStage>=18){showStorySearchResult("Kamu sudah sampai di sini","Pikirkan kembali pilihanmu, lalu masukkan kata yang terasa paling jujur.");return true;}
  const r=storyRiddles[storyStage];
- if((r.acceptAny&&q.length>0)||r.answer.some(a=>normalizeStoryAnswer(a)===q)){
-  showStorySearchResult("Ada yang terasa cocok ✨","Sera seperti sengaja meninggalkan jejak berikutnya. Pilih respons Gaska untuk melanjutkan.");
+ const alt=(storyAltAnswers[storyStage]||[]).some(a=>normalizeStoryAnswer(a)===q);
+ const primary=(r.answer||[]).some(a=>normalizeStoryAnswer(a)===q) || (r.acceptAny&&q.length>0&&!alt);
+ if(primary||alt){
+  if(alt)storyRouteScore-=1; else storyRouteScore+=1;
+  try{localStorage.setItem("sera-route-score-v7",String(storyRouteScore));}catch(e){}
+  showStorySearchResult("Aku ingat kamu pernah menyebut itu ✨","Ada sesuatu yang terasa cocok. Sekarang pilih responsmu; kadang jawaban kecil bisa punya arti yang berbeda.");
   showStoryChoice();
   return true;
  }
- showStorySearchResult("Belum cocok","Buka tab <b>Petunjuk</b> untuk melihat aplikasi yang harus dibuka, benda/detail yang dicari, dan apa yang perlu kamu ketik. Jawaban tidak perlu memakai huruf kapital.");
+ showStorySearchResult("Belum cocok","Coba baca lagi pertanyaanku. Kamu boleh kembali ke aplikasi yang disebut di tab Petunjuk, lalu coba kata lain yang menurutmu paling dekat.");
  return true;
 }
+
 let ringtoneCtx=null,ringtoneTimer=null;
 function stopStoryRingtone(){if(ringtoneTimer){clearInterval(ringtoneTimer);ringtoneTimer=null;}if(ringtoneCtx){try{ringtoneCtx.close();}catch(e){}ringtoneCtx=null;}}
 function startStoryRingtone(){stopStoryRingtone();try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;ringtoneCtx=new AC();const ctx=ringtoneCtx;const chirp=()=>{if(!ringtoneCtx)return;[880,660].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type="sine";o.frequency.value=f;g.gain.setValueAtTime(0.0001,ctx.currentTime+i*.18);g.gain.exponentialRampToValueAtTime(.055,ctx.currentTime+i*.18+.025);g.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+i*.18+.14);o.connect(g);g.connect(ctx.destination);o.start(ctx.currentTime+i*.18);o.stop(ctx.currentTime+i*.18+.16);});};chirp();ringtoneTimer=setInterval(chirp,1800);}catch(e){}}
