@@ -439,6 +439,26 @@ Tempel seluruh file ini ke kolom HTML CodePen. CSS dan JavaScript sudah termasuk
   .call-actions{display:flex;justify-content:space-around;gap:40px;width:100%;margin:auto 0 38px;padding-top:30px}.call-actions button{display:flex;flex-direction:column;align-items:center;gap:9px;color:white;font-size:12px}.call-actions button span{width:66px;height:66px;border-radius:50%;display:grid;place-items:center;font-size:28px;box-shadow:0 5px 18px #0003}.call-decline span{background:#ff453a}.call-answer span{background:#30d158}
   .call-dialogue{width:100%;margin:18px 0 0;text-align:left;background:#f6f5fa;color:#262331;border-radius:22px;padding:14px;box-shadow:0 10px 35px #0003}.call-dialogue-label{text-align:center;color:#8d8298;font-size:9px;letter-spacing:1.4px;margin:2px 0 13px}.call-lines{display:flex;flex-direction:column;gap:8px;max-height:36vh;overflow:auto;padding:2px 0 10px}.call-line{font-size:12px;line-height:1.5;padding:10px 12px;border-radius:14px;max-width:90%;white-space:pre-line}.call-line.from{align-self:flex-start;background:#fff;border-bottom-left-radius:4px}.call-line.to{align-self:flex-end;background:#d9f8cb;border-bottom-right-radius:4px}.call-choices{display:flex;flex-direction:column;gap:7px;margin:7px 0}.call-choice{background:#e9e5f1;color:#554566;border:1px solid #d8cfe5;border-radius:13px;padding:11px 12px;text-align:left;font-size:12px;line-height:1.45}.call-end{width:100%;padding:11px;border-radius:12px;background:#302b3c;color:#fff;margin-top:7px;font-size:12px}
 
+
+  .in-app-music-visual{width:100%;min-height:165px;border-radius:14px;background:linear-gradient(145deg,#302238,#7c426c 55%,#b65e88);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:18px;text-align:center}
+  .in-app-music-visual .music-note{font-size:30px}.in-app-music-visual b{font-size:14px}.in-app-music-visual small{font-size:11px;opacity:.8}.in-app-music-visual p{font-size:10px;opacity:.75;margin-top:3px}
+  .music-equalizer{display:flex;gap:4px;align-items:center;height:20px}.music-equalizer i{width:3px;height:6px;border-radius:3px;background:#fff;opacity:.8}
+  .is-playing .music-equalizer i{animation:eq .7s infinite ease-in-out alternate}.is-playing .music-equalizer i:nth-child(2){animation-delay:.12s}.is-playing .music-equalizer i:nth-child(3){animation-delay:.25s}.is-playing .music-equalizer i:nth-child(4){animation-delay:.08s}.is-playing .music-equalizer i:nth-child(5){animation-delay:.18s}
+  @keyframes eq{to{height:19px}}
+  .music-source-note{font-size:10px;line-height:1.45;color:#827487;padding:8px 2px 0;text-align:center}
+  .safari-tool-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:12px 0}
+  .safari-tool-tab{background:#e8e6ef;color:#61586c;border-radius:12px;padding:11px 4px;font-size:11px;font-weight:750}
+  .safari-tool-tab.active{background:#57466b;color:#fff;box-shadow:0 4px 12px #57466b22}
+  .safari-panel{display:none}.safari-panel.active{display:block}
+  .safari-start .safari-detail-list{padding-left:18px;font-size:12px;line-height:1.65;color:#666;margin-top:8px}
+  .story-quest-card .story-app-chip{display:inline-flex;background:#eee8f6;color:#70558c;border-radius:8px;padding:5px 8px;font-size:10px;font-weight:800;margin:7px 0}
+  .story-quest-card .story-do-this{font-size:12px;line-height:1.55;color:#4e4858;background:#f8f5fb;border-radius:11px;padding:10px;margin-top:7px}
+  .story-choice-wrap{background:#fff;border:1px solid #e5ddec;border-radius:15px;padding:13px;margin-top:12px}
+  .story-choice-wrap h4{font-size:13px;margin-bottom:5px;color:#44364f}
+  .story-choice-wrap p{font-size:11px;line-height:1.5;color:#777;margin-bottom:9px}
+  .story-choice-btn{width:100%;text-align:left;background:#f3eff8;color:#574568;border-radius:11px;padding:11px;margin-top:7px;font-size:12px;line-height:1.45}
+  .story-score-note{font-size:10px;color:#93889e;line-height:1.5;margin-top:9px}
+
 </style>
 </head>
 <body>
@@ -920,7 +940,7 @@ function refreshSeraGallery(){
  const grid=$("gallery-grid"); if(!grid)return;
  grid.dataset.built=""; grid.innerHTML=""; buildSeraGallery();
  const riddle=document.querySelector("#sera-gallery .gallery-riddle p");
- if(riddle)riddle.textContent="Foto baru akan muncul sedikit demi sedikit. Petunjuknya tersebar di Pesan, Catatan, Musik, Peta, dan panggilan masuk—jangan hanya mencari di Galeri.";
+ if(riddle)riddle.textContent="Foto baru terbuka setelah kamu menyelesaikan bab di Safari. Jika Sera meminta kamu mencari sesuatu di foto, buka fotonya, periksa caption/objek yang terlihat, lalu kembali ke Safari → Petunjuk untuk mengetahui kata yang harus diketik dan aplikasi selanjutnya.";
 }
 function changeGalleryZoom(next){galleryScale=Math.max(1,Math.min(4,next));$("gallery-viewer-image").style.transform=`scale(${galleryScale})`;}
 $("gallery-prev").addEventListener("click",()=>setSeraGalleryPhoto(seraGalleryIndex-1));
@@ -954,15 +974,12 @@ const seraMusic = [
  {title:"TOMAT",artist:"Wali",search:"Wali TOMAT"}
 ];
 let seraTrack=-1, seraPlaying=false, seraEndAt=0;
-function ytSend(func,args){
-  const f=document.querySelector("#music-player-slot iframe");
-  if(f&&f.contentWindow)f.contentWindow.postMessage(JSON.stringify({event:"command",func:func,args:args||[]}),"*");
-}
 function syncMusicUI(){
   const title=$("music-now-title"); if(!title)return;
   const t=seraMusic[seraTrack], tog=$("music-toggle");
   if(t){
-    title.textContent=t.title; $("music-now-artist").textContent=t.artist+(seraPlaying?" · sedang diputar":" · dijeda");
+    title.textContent=t.title;
+    $("music-now-artist").textContent=t.artist+(seraPlaying?" · dipilih di playlist":" · siap dipilih");
     tog.classList.add("show"); tog.textContent=seraPlaying?"⏸ Jeda":"▶ Putar";
   }
   document.querySelectorAll("#music-track-list [data-track]").forEach(btn=>{
@@ -973,33 +990,23 @@ function syncMusicUI(){
 function playSeraTrack(i,auto){
   const t=seraMusic[i], slot=$("music-player-slot"); if(!t||!slot)return;
   seraTrack=i; seraPlaying=false;
-  const searchUrl="https://www.youtube.com/results?search_query="+encodeURIComponent(t.search||(`${t.artist} ${t.title}`));
-  slot.innerHTML=`<div class="music-idle" style="background:linear-gradient(135deg,#292536,#5d476a);font-size:32px">♫<span style="display:block;font-size:11px;font-weight:500;margin-top:8px">Lagu dipilih</span></div><a class="music-external-link" href="${searchUrl}" target="_blank" rel="noopener noreferrer">Cari & putar “${t.title}” di YouTube ↗</a>`;
+  slot.innerHTML=`<div class="music-idle in-app-music-visual"><span class="music-note">♫</span><span class="music-equalizer"><i></i><i></i><i></i><i></i><i></i></span><b>${t.title}</b><small>${t.artist}</small><p>Lagu dipilih · pemutar tetap di aplikasi Musik</p></div><p class="music-source-note">Pemutar tidak membuka YouTube atau aplikasi lain. Audio asli belum terhubung; sumber audio resmi bisa ditambahkan nanti.</p>`;
   syncMusicUI();
 }
 function toggleSeraPlayback(){
-  if(seraTrack<0)return;
-  const t=seraMusic[seraTrack], frame=document.querySelector("#music-player-slot iframe");
-  if(!frame){window.open("https://www.youtube.com/results?search_query="+encodeURIComponent(t.search||(`${t.artist} ${t.title}`)),"_blank","noopener");return;}
-  ytSend(seraPlaying?"pauseVideo":"playVideo"); seraPlaying=!seraPlaying; syncMusicUI();
-}
-/* Status pemutar dari YouTube: sinkron tombol Jeda/Putar & lanjut otomatis ke lagu berikutnya */
-window.addEventListener("message",e=>{
-  const f=document.querySelector("#music-player-slot iframe");
-  if(!f||e.source!==f.contentWindow)return;
-  let d=e.data; if(typeof d==="string"){ try{ d=JSON.parse(d); }catch(_){ return; } }
-  if(!d||typeof d!=="object")return;
-  const st=d.event==="onStateChange"?d.info:(d.event==="infoDelivery"&&d.info&&typeof d.info.playerState==="number"?d.info.playerState:null);
-  if(st===null)return;
-  if(st===1)seraPlaying=true; else if(st===2)seraPlaying=false;
-  else if(st===0&&d.event==="onStateChange"&&Date.now()-seraEndAt>1500){ seraEndAt=Date.now(); playSeraTrack((seraTrack+1)%seraMusic.length,true); return; }
+  if(seraTrack<0){playSeraTrack(0);return;}
+  seraPlaying=!seraPlaying;
+  const visual=document.querySelector(".in-app-music-visual");
+  if(visual)visual.classList.toggle("is-playing",seraPlaying);
+  const note=document.querySelector(".music-source-note");
+  if(note)note.textContent=seraPlaying?"Tampilan pemutar aktif di aplikasi Musik. Audio asli belum terhubung.":"Pemutaran dijeda. Audio asli belum terhubung.";
   syncMusicUI();
-});
+}
 /* Tampilan Musik dibuat sekali & dipertahankan agar lagu tetap jalan di latar belakang saat aplikasi ditutup */
 function buildMusicApp(){
   const root=$("music-app-content"); if(!root||root.dataset.built==="yes")return;
   root.dataset.built="yes";
-  root.innerHTML=`<div class="native-status"><span>9:41</span><span>●●●  ▰  ▰</span></div><div class="music-screen"><div class="music-top"><span>♫ MUSIC</span><span>•••</span></div><div class="music-feature"><h3>Playlist Sera</h3><p>Lagu-lagu yang menemani perjalanan pulang, tugas, dan hal-hal yang belum berani ia katakan.</p></div><div class="music-now"><div id="music-player-slot"><div class="music-idle">♫</div></div><div class="music-now-row"><div class="music-now-copy"><div class="music-now-title" id="music-now-title">Pilih lagu untuk diputar</div><div class="music-now-artist" id="music-now-artist">Playlist Sera</div></div><button class="music-toggle" id="music-toggle">⏸ Jeda</button></div></div><div class="music-section-label">Lagu Sera</div><div id="music-track-list">${seraMusic.map((t,i)=>`<button class="music-track" data-track="${i}"><span class="music-cover">♫</span><span class="music-track-copy"><div class="music-track-name">${t.title}</div><div class="music-track-artist">${t.artist}</div></span><span class="music-play">▷</span></button>`).join("")}</div><p style="font-size:10px;color:#8b8590;line-height:1.5;margin-top:12px">Pemutaran menggunakan YouTube dan membutuhkan internet. Ketuk tombol ▶ di daftar lagu; jika pemutar tidak muncul atau tetap gelap, gunakan tautan “Buka lagu di YouTube”.</p></div>`;
+  root.innerHTML=`<div class="native-status"><span>9:41</span><span>●●●  ▰  ▰</span></div><div class="music-screen"><div class="music-top"><span>♫ MUSIC</span><span>•••</span></div><div class="music-feature"><h3>Playlist Sera</h3><p>Lagu-lagu yang menemani perjalanan pulang, tugas, dan hal-hal yang belum berani ia katakan.</p></div><div class="music-now"><div id="music-player-slot"><div class="music-idle">♫</div></div><div class="music-now-row"><div class="music-now-copy"><div class="music-now-title" id="music-now-title">Pilih lagu untuk diputar</div><div class="music-now-artist" id="music-now-artist">Playlist Sera</div></div><button class="music-toggle" id="music-toggle">⏸ Jeda</button></div></div><div class="music-section-label">Lagu Sera</div><div id="music-track-list">${seraMusic.map((t,i)=>`<button class="music-track" data-track="${i}"><span class="music-cover">♫</span><span class="music-track-copy"><div class="music-track-name">${t.title}</div><div class="music-track-artist">${t.artist}</div></span><span class="music-play">▷</span></button>`).join("")}</div><p style="font-size:10px;color:#8b8590;line-height:1.5;margin-top:12px">Pilih lagu untuk menampilkannya di pemutar dalam aplikasi. Tidak akan dialihkan ke YouTube. Audio asli belum disambungkan karena file/tautan audio resmi belum diberikan; tombol Putar saat ini mengatur tampilan pemutar saja.</p></div>`;
   root.querySelectorAll("[data-track]").forEach(btn=>btn.addEventListener("click",()=>{ const i=Number(btn.dataset.track); i===seraTrack?toggleSeraPlayback():playSeraTrack(i); }));
   $("music-toggle").addEventListener("click",toggleSeraPlayback);
 }
@@ -1058,8 +1065,43 @@ function renderNativeApp(id){
  root.classList.add("show");
  const status='<div class="native-status"><span>9:41</span><span>●●●  ▰  ▰</span></div>';
  if(id==="safari"){
-  root.innerHTML=status+`<div class="native-title">Safari</div><p class="native-subtitle">Apa yang ingin Sera cari hari ini?</p><form class="safari-search" id="safari-search-form"><span>🔎</span><input id="safari-query" placeholder="Cari atau masukkan situs web" aria-label="Cari di Safari"><button type="submit">Cari</button></form>${typeof storyProgressCard==="function"?storyProgressCard():""}<div class="safari-start"><b>Favorit</b><div class="safari-favorites"><div class="safari-fav"><i>🌐</i>Google</div><div class="safari-fav"><i>▶️</i>YouTube</div><div class="safari-fav"><i>📚</i>Wikipedia</div><div class="safari-fav"><i>🎧</i>Spotify</div><div class="safari-fav"><i>☁️</i>iCloud</div><div class="safari-fav"><i>📰</i>Berita</div></div></div><div class="safari-start" style="margin-top:12px"><b>Petunjuk Sera</b><p style="font-size:12px;color:#777;line-height:1.5;margin-top:7px">Petunjuk tersebar di seluruh iPhone: Pesan, Catatan, Musik, Peta, dan panggilan masuk. Selesaikan rangkaian teka-teki sebelum mencari kata kunci ending.</p></div><div class="safari-start" style="margin-top:12px"><b>Privasi di Safari</b><p style="font-size:12px;color:#777;line-height:1.5;margin-top:7px">Jelajahi internet dengan tampilan browser yang sederhana.</p></div><div class="native-homebar"></div>`;
-  $("safari-search-form").addEventListener("submit",e=>{e.preventDefault();const q=$("safari-query").value.trim();if(!q)return;if(typeof maybeHandleStorySearch==="function"){maybeHandleStorySearch(q);refreshSafariQuest();return;}});
+  root.innerHTML=status+`<div class="native-title">Safari</div><p class="native-subtitle">Ruang petunjuk Sera · bukan internet sungguhan</p>
+  <div class="safari-tool-tabs" role="tablist">
+   <button class="safari-tool-tab active" type="button" data-safari-tab="keywords">🔑 Kata kunci</button>
+   <button class="safari-tool-tab" type="button" data-safari-tab="hints">🧩 Petunjuk</button>
+   <button class="safari-tool-tab" type="button" data-safari-tab="readme">📖 Read me first</button>
+  </div>
+  <section class="safari-panel active" id="safari-panel-keywords">
+   <div class="safari-start"><b>Kata kunci</b><p style="font-size:12px;color:#777;line-height:1.55;margin-top:7px">Masukkan jawaban yang kamu temukan saat menjelajahi HP Sera. Setiap jawaban membuka bab berikutnya. Setelah menjawab, pilih respons Gaska—setiap pilihan bernilai +1 ke <b>Daylight</b> atau +1 ke <b>just friends</b>.</p></div>
+   <form class="safari-search" id="safari-search-form"><span>🔎</span><input id="safari-query" placeholder="Masukkan kata kunci bab..." aria-label="Masukkan kata kunci bab"><button type="submit">Kirim</button></form>
+   ${typeof storyProgressCard==="function"?storyProgressCard():""}
+   <div class="safari-start" style="margin-top:12px"><b>Hasil dan kata kunci utama</b><p style="font-size:12px;color:#777;line-height:1.55;margin-top:7px">Setelah 18 bab dan 18 pilihan selesai, Safari akan memberi satu kata kunci utama berdasarkan pilihanmu. Masukkan kata kunci itu di sini untuk membuka ending yang sesuai.</p></div>
+  </section>
+  <section class="safari-panel" id="safari-panel-hints">
+   <div class="safari-start"><b>Petunjuk bab saat ini</b><p style="font-size:12px;color:#777;line-height:1.55;margin-top:7px">Petunjuk menjelaskan aplikasi yang harus dibuka, hal yang dicari, dan kata yang perlu diketik di tab Kata kunci.</p><div id="safari-hint-current">${typeof storyHintPanel==="function"?storyHintPanel():""}</div></div>
+   <div class="safari-start"><b>Perjalanan bab</b><div id="safari-hint-list">${typeof storyHintList==="function"?storyHintList():""}</div></div>
+  </section>
+  <section class="safari-panel" id="safari-panel-readme">
+   <div class="safari-start"><b>READ ME FIRST 💌</b><p style="font-size:12px;color:#777;line-height:1.6;margin-top:8px">Hai, Gaska. Kalau kamu menemukan ini, berarti Sera memang menyiapkan sesuatu untukmu. Jangan buru-buru menebak ending—nikmati prosesnya.</p>
+   <ol class="safari-detail-list">
+    <li><b>Pesan & Telegram:</b> baca percakapan, perhatikan pilihan balasan, dan simpan detail yang terasa penting.</li>
+    <li><b>Catatan:</b> berisi hal yang Sera tulis, daftar rencana, serta petunjuk buku dan film.</li>
+    <li><b>Musik:</b> buka playlist Sera. Judul dan urutan lagu adalah bagian dari teka-teki.</li>
+    <li><b>Galeri:</b> foto terbuka sedikit demi sedikit. Baca caption/petunjuknya; cari detail yang diminta, lalu masukkan jawabannya di Safari.</li>
+    <li><b>Peta:</b> periksa tempat yang pernah kalian impikan dan detail yang tertulis di sana.</li>
+    <li><b>Telepon:</b> kalau panggilan masuk, terima untuk membaca dialog dan pilih jawaban Gaska. Pilihanmu memengaruhi ending.</li>
+    <li><b>Kata kunci:</b> masukkan jawaban bab satu per satu. Setelah tiap jawaban, pilih respons Gaska. Tiap pilihan bernilai satu poin ke salah satu ending.</li>
+    <li><b>Petunjuk:</b> kalau bingung, buka tab ini. Setiap bab memberi nama aplikasi, apa yang harus dicari, dan apa yang harus diketik.</li>
+   </ol>
+   <p style="font-size:12px;color:#6b5b79;line-height:1.6;margin-top:10px"><b>Tujuanmu:</b> selesaikan 18 bab. Setelah itu, Safari akan menghitung pilihanmu dan menunjukkan kata kunci ending utama. Kata kunci akhir harus sesuai hasil pilihan—jadi keputusanmu, bukan tebakan, yang menentukan akhir cerita.</p></div>
+  </section>
+  <div class="native-homebar"></div>`;
+  root.querySelectorAll("[data-safari-tab]").forEach(btn=>btn.addEventListener("click",()=>{
+    root.querySelectorAll("[data-safari-tab]").forEach(b=>b.classList.toggle("active",b===btn));
+    root.querySelectorAll(".safari-panel").forEach(p=>p.classList.toggle("active",p.id==="safari-panel-"+btn.dataset.safariTab));
+    if(btn.dataset.safariTab==="hints"){refreshSafariQuest();refreshSafariHints();}
+  }));
+  $("safari-search-form").addEventListener("submit",e=>{e.preventDefault();const q=$("safari-query").value.trim();if(!q)return;if(typeof maybeHandleStorySearch==="function"){maybeHandleStorySearch(q);refreshSafariQuest();refreshSafariHints();}});
  } else if(id==="catatan"){
   root.innerHTML=status+`<div class="notes-screen"><div class="native-title">Catatan</div><p class="native-subtitle">Semua catatan · di iPhone ini</p><div class="notes-group">Hari ini</div><article class="note-card note-open-card" data-note="todo"><h3>To-do hari ini ☁️</h3><p>□ Selesaikan tugas kelompok · Beli kopi · Balas chat grup kelas…</p><div class="note-meta">07.15 · Ketuk untuk membuka</div></article><article class="note-card note-open-card" data-note="ingat"><h3>Hal kecil yang harus diingat</h3><p>Charger di tas. Buku di meja. Jangan lupa bawa payung…</p><div class="note-meta">Kemarin · Ketuk untuk membuka</div></article><div class="notes-group">Catatan pribadi</div><article class="note-card note-open-card" data-note="film"><h3>Film yang mau ditonton 🎬</h3><p>Interstellar, rekomendasi teman, dan jadwal yang cocok…</p><div class="note-meta">Senin · Ketuk untuk membuka</div></article><div class="notes-group">Surat yang tidak pernah dikirim</div><article class="letter-card note-open-card" data-note="surat1"><span class="letter-seal">✉️</span><h3>Untuk Gaska — kalau suatu hari aku berani</h3><p>Ada hal yang selalu ingin Sera katakan.</p><div class="letter-lock">🔒 Belum bisa dibuka</div></article><article class="letter-card note-open-card" data-note="surat2"><span class="letter-seal">💌</span><h3>Untuk Gaska, tentang hari itu</h3><p>Disimpan sebagai draf.</p><div class="letter-lock">🔒 Akan terbuka sesuai alur cerita</div></article><p class="native-note-hint">Ketuk catatan biasa untuk membaca isinya. Surat untuk Gaska tetap terkunci sampai alur cerita membukanya.</p><div class="native-homebar"></div></div>`;
   const noteDetails={
@@ -1386,12 +1428,124 @@ const storyRiddles=[
  {title:"Bab 17 · Tempat untuk berhenti sebentar",clue:"Sebelum petunjuk terakhir, pikirkan minuman yang kalian suka pesan saat duduk lama dan bicara tentang film, sekolah, atau masa depan. Jawab dengan satu kata dalam bahasa Indonesia.",answer:["kopi"],success:"Kopi. Ada notifikasi baru dari Sera. Dia ingin menelepon, tapi kali ini Gaska yang harus memilih apa yang akan ia katakan.",hint:"Periksa pesan Kirana dan catatan to-do Sera."},
  {title:"Bab 18 · Dua bebek kecil",clue:"Di antara semua cita-cita serius, Sera pernah punya cita-cita yang terdengar sangat tidak serius: menjadi pasangan hewan yang suka berjalan beriringan dan berbunyi 'wek wek'. Apa hewannya?",answer:["bebek","pasangan bebek"],success:"Bebek. Sera tidak bisa berhenti tertawa ketika mengingatnya. 'Kamu ingat hal-hal aneh tentang aku juga, ya?' Semua potongan kenangan kini sudah terbuka.",hint:"Baca ulang pesan Kirana dan catatan Sera. Jawabannya sengaja lucu."}
 ];
-try{storyStage=Math.max(0,Math.min(18,Number(localStorage.getItem("sera-story-stage-v2")||0)));}catch(e){}
+try{storyStage=Math.max(0,Math.min(18,Number(localStorage.getItem("sera-story-stage-v4")||0)));}catch(e){}
+
+let storyRouteScore=0, storyChoiceCount=0, storyChoicePending=false, storyRouteReady=false;
+try{
+ storyRouteScore=Number(localStorage.getItem("sera-route-score-v4")||0);
+ storyChoiceCount=Math.max(0,Math.min(18,Number(localStorage.getItem("sera-route-count-v4")||0)));
+ storyRouteReady=storyChoiceCount>=18 && storyStage>=18;
+}catch(e){}
+const storyGuides=[
+ {app:"Catatan",task:"Buka Catatan → “Film yang mau ditonton”. Cari judul buku klasik yang sedang dibaca Gaska. Ketik judul buku itu di Kata kunci.",next:"Setelah benar, buka Pesan dan baca percakapan Sera dengan Kirana."},
+ {app:"Pesan",task:"Cari percakapan Sera dan Kirana tentang film yang pernah kalian tonton. Temukan judul film tentang perjalanan antarbintang, waktu, dan cinta.",next:"Setelah benar, baca Catatan pribadi untuk petunjuk berikutnya."},
+ {app:"Catatan + Pesan",task:"Baca catatan tentang teori Gaska dan chat Kirana. Cari bidang yang berhubungan dengan planet, galaksi, dan lubang hitam.",next:"Berikutnya buka Pesan dan cari game yang sering dimainkan Gaska."},
+ {app:"Pesan",task:"Baca chat yang menyebut pertandingan dan pesawat. Nama game itu adalah jawaban bab ini.",next:"Sesudah benar, buka Catatan untuk mencari comfort food Gaska."},
+ {app:"Catatan",task:"Di catatan tentang hal kecil yang diingat Sera, cari makanan yang pernah disebut Gaska sebagai comfort food. Ketik nama hidangannya.",next:"Berikutnya buka Peta dan cari dua tempat impian."},
+ {app:"Peta",task:"Buka Peta → Daftar impian. Ada Swiss dan Edinburgh. Ketik salah satu nama tempat itu di Kata kunci.",next:"Berikutnya buka Musik dan periksa lagu kedua."},
+ {app:"Musik",task:"Buka Musik. Cari lagu kedua dari BTS yang judulnya meminta satu malam lagi. Ketik judul lengkapnya.",next:"Berikutnya periksa lagu pertama di Musik."},
+ {app:"Musik",task:"Di lagu pertama playlist, cari judul lagu Olivia Rodrigo yang menyebut 'song' dan terasa seperti perasaan yang bikin malu. Ketik judulnya.",next:"Berikutnya buka lagu keempat di Musik."},
+ {app:"Musik",task:"Cari versi Haley Reinhart dari lagu cinta klasik. Ketik judul lengkapnya; tanda apostrof boleh diabaikan.",next:"Berikutnya buka lagu kelima di Musik."},
+ {app:"Musik",task:"Lagu kelima dari Yura Yunita menggambarkan dunia yang penuh tipu-tipu. Ketik judulnya.",next:"Berikutnya buka lagu keenam di Musik."},
+ {app:"Musik",task:"Lagu keenam dari Sheila on 7 menyebut seseorang sebagai anugerah terindah. Ketik bagian inti judulnya.",next:"Berikutnya buka lagu ketujuh di Musik."},
+ {app:"Musik",task:"Lagu ketujuh dari 5 Seconds of Summer punya judul tiga kata yang berulang tentang ciuman. Ketik judulnya.",next:"Berikutnya buka lagu kedelapan di Musik."},
+ {app:"Musik",task:"Cari lagu satu kata dari Troye Sivan tentang masa muda. Ketik judulnya.",next:"Berikutnya buka lagu kesembilan di Musik."},
+ {app:"Musik",task:"Lagu kesembilan di playlist punya judul dua kata yang berarti obat/penyembuh. Ketik judulnya.",next:"Berikutnya buka lagu terakhir di Musik."},
+ {app:"Musik",task:"Lagu terakhir dari Wali punya judul empat huruf yang terdengar seperti nama sayuran. Ketik judulnya.",next:"Berikutnya buka lagu ketiga di Musik. Ini lagu kalian, tetapi belum menjadi kata kunci ending."},
+ {app:"Musik",task:"Cari lagu ketiga di playlist, dari Taylor Swift. Judulnya seperti cahaya siang hari. Ketik judul lagu itu sebagai jawaban bab, bukan sebagai ending.",next:"Berikutnya buka Pesan atau Catatan dan cari petunjuk minuman yang kalian suka."},
+ {app:"Pesan + Catatan",task:"Baca chat Kirana dan daftar to-do Sera. Cari minuman yang sering kalian pesan saat ngobrol lama.",next:"Bab terakhir ada di Pesan dan Catatan pribadi. Cari cita-cita Sera yang paling konyol."},
+ {app:"Pesan + Catatan",task:"Baca ulang percakapan Kirana dan catatan Sera. Hewan apa yang ingin Sera jadikan pasangan hidup? Ketik nama hewannya.",next:"Setelah bab terakhir, pilih respons Gaska untuk menghitung ending. Buka Kata kunci lagi."}
+];
 function normalizeStoryAnswer(q){return q.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[’']/g,"'").replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();}
-function storyProgressCard(){if(storyStage>=18)return `<div class="safari-start story-quest-card" style="margin-top:12px;border:1px solid #ded4ec"><b>Semua 18 bab selesai ✨</b><p style="font-size:12px;line-height:1.6;margin-top:7px">Semua kenangan sudah ditemukan. Ketik <b>just friends</b> untuk ending sedih atau <b>Daylight</b> untuk happy ending.</p></div>`;const r=storyRiddles[Math.min(storyStage,17)];return `<div class="safari-start story-quest-card" style="margin-top:12px;border:1px solid #ded4ec"><div style="font-size:10px;letter-spacing:1.2px;color:#9277a5;font-weight:800">BEFORE WE BECAME US · ${Math.min(storyStage+1,18)}/18</div><b style="display:block;margin-top:7px">${r.title}</b><p style="font-size:12px;color:#686070;line-height:1.6;margin-top:7px">${r.clue}</p><details style="margin-top:9px;font-size:11px;color:#81758b"><summary style="cursor:pointer;font-weight:700">Minta petunjuk kecil</summary><p style="line-height:1.5;margin-top:7px">${r.hint}</p></details><p style="font-size:10px;color:#9b91a4;margin-top:9px">Bab selesai: ${storyStage}/18 · Foto terbuka: ${Math.min(seraPhotos.length,4+Math.floor(storyStage*25/18))}/${seraPhotos.length}</p></div>`;}
-function refreshSafariQuest(){const root=$("native-app-content");if(!root||!root.querySelector("#safari-search-form"))return;const old=root.querySelector(".story-quest-card");if(old)old.remove();const form=root.querySelector("#safari-search-form");if(form)form.insertAdjacentHTML("afterend",storyProgressCard());}
-function showStorySearchResult(title,body){const root=$("native-app-content");if(!root)return;const old=root.querySelector(".safari-result-note");if(old)old.remove();const note=document.createElement("div");note.className="safari-result-note";note.innerHTML=`<b>${title}</b><p style="margin-top:7px">${body}</p>`;root.querySelector("#safari-search-form")?.after(note);}
-function progressStory(){if(storyStage>=18)return;const finished=storyRiddles[storyStage];showStorySearchResult("Petunjuk terbuka ✨",finished.success);storyStage=Math.min(storyStage+1,18);try{localStorage.setItem("sera-story-stage-v2",String(storyStage));}catch(e){}refreshSeraGallery();refreshSafariQuest();if(storyStage===3&&!storyCallSeen.sera){storyCallSeen.sera=true;setTimeout(()=>triggerStoryCall("sera"),1200);}if(storyStage===6&&!storyCallSeen.gaska){storyCallSeen.gaska=true;setTimeout(()=>triggerStoryCall("gaska"),1200);}if(storyStage===12&&!storyCallSeen.sera2){storyCallSeen.sera2=true;setTimeout(()=>triggerStoryCall("sera2"),1200);}}
+function storyProgressCard(){
+ if(storyStage>=18){
+  const route=storyRouteScore>0?"Daylight":"just friends";
+  return `<div class="safari-start story-quest-card" style="margin-top:12px;border:1px solid #ded4ec"><b>Semua 18 bab selesai ✨</b><p style="font-size:12px;line-height:1.6;margin-top:7px">Pilihanmu: ${storyRouteScore} poin menuju Daylight · ${18-storyRouteScore/1} tidak dipakai. Kata kunci utama untuk endingmu adalah <b>${route}</b>. Ketik kata kunci ini di kolom Kata kunci untuk membuka ending.</p><p class="story-score-note">Poin akhir: ${storyRouteScore}. Poin positif membuka Daylight; poin nol atau negatif membuka just friends.</p></div>`;
+ }
+ const r=storyRiddles[Math.min(storyStage,17)],g=storyGuides[Math.min(storyStage,17)];
+ return `<div class="safari-start story-quest-card" style="margin-top:12px;border:1px solid #ded4ec"><div style="font-size:10px;letter-spacing:1.2px;color:#9277a5;font-weight:800">BEFORE WE BECAME US · BAB ${storyStage+1}/18</div><b style="display:block;margin-top:7px">${r.title}</b><span class="story-app-chip">BUKA APLIKASI: ${g.app}</span><p style="font-size:12px;color:#686070;line-height:1.6;margin-top:7px">${r.clue}</p><div class="story-do-this"><b>Yang harus dilakukan</b><br>${g.task}</div><details style="margin-top:9px;font-size:11px;color:#81758b"><summary style="cursor:pointer;font-weight:700">Hint lebih jelas</summary><p style="line-height:1.5;margin-top:7px">${r.hint}</p><p style="line-height:1.5;margin-top:7px"><b>Setelah berhasil:</b> ${g.next}</p></details><p class="story-score-note">Bab selesai: ${storyStage}/18 · Pilihan ending: ${storyChoiceCount}/18 · Foto terbuka: ${Math.min(seraPhotos.length,4+Math.floor(storyStage*25/18))}/${seraPhotos.length}</p></div>`;
+}
+function storyHintPanel(){
+ if(storyStage>=18)return `<p style="font-size:12px;line-height:1.6">Semua bab selesai. Buka tab <b>Kata kunci</b> untuk melihat kata kunci utama hasil pilihanmu.</p>`;
+ const r=storyRiddles[storyStage],g=storyGuides[storyStage];
+ return `<div class="story-app-chip">APLIKASI: ${g.app}</div><p style="font-size:12px;line-height:1.6;color:#555"><b>${r.title}</b><br>${g.task}</p><p style="font-size:12px;line-height:1.6;color:#776986"><b>Hint:</b> ${r.hint}</p><p style="font-size:12px;line-height:1.6;color:#555"><b>Setelah jawaban benar:</b> ${g.next}</p>`;
+}
+function storyHintList(){
+ return `<ol class="safari-detail-list">${storyRiddles.map((r,i)=>`<li style="margin-bottom:7px"><b>${i<storyStage?"✓":i===storyStage?"▶":"🔒"} ${r.title}</b><br><span style="color:#777">${i<storyStage?"Selesai":i===storyStage?"Bab aktif — ikuti petunjuk di atas":"Terbuka setelah bab sebelumnya"}</span></li>`).join("")}</ol>`;
+}
+function refreshSafariHints(){
+ const current=$("safari-hint-current"),list=$("safari-hint-list");
+ if(current)current.innerHTML=storyHintPanel();
+ if(list)list.innerHTML=storyHintList();
+}
+function refreshSafariQuest(){
+ const root=$("native-app-content");if(!root||!root.querySelector("#safari-search-form"))return;
+ const card=root.querySelector(".story-quest-card");if(card)card.outerHTML=storyProgressCard();
+ refreshSafariHints();
+}
+function showStorySearchResult(title,body){
+ const root=$("native-app-content");if(!root)return;
+ const old=root.querySelector(".safari-result-note");if(old)old.remove();
+ const note=document.createElement("div");note.className="safari-start safari-result-note";
+ note.innerHTML=`<b>${title}</b><p style="font-size:12px;line-height:1.6;color:#686070;margin-top:7px">${body}</p>`;
+ root.querySelector("#safari-search-form")?.after(note);
+}
+function showStoryChoice(){
+ const root=$("native-app-content");if(!root)return;
+ const old=root.querySelector(".safari-result-note");if(old)old.remove();
+ const note=document.createElement("div");note.className="safari-start safari-result-note story-choice-wrap";
+ note.innerHTML=`<h4>Pilihan Gaska · 1 poin</h4><p>Jawabanmu benar. Sekarang pilih cara Gaska merespons Sera. Setiap bab punya bobot yang sama: satu poin ke arah Daylight atau satu poin ke arah just friends.</p><button type="button" class="story-choice-btn" data-route="hope">💗 Aku ingin memberi Sera kesempatan, meski pelan-pelan.</button><button type="button" class="story-choice-btn" data-route="friends">🤍 Aku ingin jujur dan tetap berteman.</button><p class="story-score-note">Pilihan saat ini: ${storyChoiceCount}/18 · poin Daylight ${storyRouteScore}, poin just friends ${storyChoiceCount-storyRouteScore}</p>`;
+ root.querySelector("#safari-search-form")?.after(note);
+ storyChoicePending=true;
+ note.querySelectorAll("[data-route]").forEach(btn=>btn.addEventListener("click",()=>{
+  if(!storyChoicePending)return;
+  storyChoicePending=false;
+  storyChoiceCount=Math.min(18,storyChoiceCount+1);
+  if(btn.dataset.route==="hope")storyRouteScore+=1;
+  else storyRouteScore-=1;
+  try{localStorage.setItem("sera-route-score-v4",String(storyRouteScore));localStorage.setItem("sera-route-count-v4",String(storyChoiceCount));}catch(e){}
+  progressStory();
+  const oldNote=root.querySelector(".safari-result-note");if(oldNote)oldNote.remove();
+  if(storyStage>=18){
+   storyRouteReady=true;
+   const route=storyRouteScore>0?"Daylight":"just friends";
+   showStorySearchResult("Semua bab selesai — kata kunci utamamu ✨",`Pilihanmu sudah dihitung. Poin akhir: ${storyRouteScore}. Kata kunci ending yang terbuka untukmu adalah <b>${route}</b>. Kembali ke tab Kata kunci dan ketik persis kata itu untuk melihat ending.`);
+  }else{
+   const next=storyGuides[storyStage];
+   showStorySearchResult("Pilihan tersimpan · bab berikutnya terbuka",`Pilihanmu bernilai 1 poin. Sekarang buka <b>${next.app}</b>. ${next.task}`);
+  }
+  refreshSafariQuest();
+ }));
+}
+function progressStory(){
+ if(storyStage>=18)return;
+ const finished=storyRiddles[storyStage];
+ storyStage=Math.min(storyStage+1,18);
+ try{localStorage.setItem("sera-story-stage-v4",String(storyStage));}catch(e){}
+ refreshSeraGallery();refreshSafariQuest();
+ if(storyStage===3&&!storyCallSeen.sera){storyCallSeen.sera=true;setTimeout(()=>triggerStoryCall("sera"),1200);}
+ if(storyStage===6&&!storyCallSeen.gaska){storyCallSeen.gaska=true;setTimeout(()=>triggerStoryCall("gaska"),1200);}
+ if(storyStage===12&&!storyCallSeen.sera2){storyCallSeen.sera2=true;setTimeout(()=>triggerStoryCall("sera2"),1200);}
+}
+function maybeHandleStorySearch(input){
+ const q=normalizeStoryAnswer(input);
+ if(storyChoicePending){showStorySearchResult("Pilih respons dulu","Pilih salah satu respons Gaska di bawah jawaban benar sebelum melanjutkan ke bab berikutnya.");return true;}
+ if(q==="just friends"||q==="friends only"||q==="teman saja"||q==="daylight"||q==="taylor swift daylight"){
+  if(storyStage<18||storyChoiceCount<18){showStorySearchResult("Kata kunci ending masih terkunci","Selesaikan 18 bab dan pilih respons Gaska di setiap bab terlebih dahulu.");return true;}
+  const route=storyRouteScore>0?"daylight":"just friends";
+  if(q!==normalizeStoryAnswer(route)){showStorySearchResult("Kata kunci itu bukan hasil pilihanmu",`Berdasarkan pilihanmu, kata kunci utama yang benar adalah <b>${route}</b>. Masukkan kata kunci itu untuk membuka ending.`);return true;}
+  showStoryEnding(route==="daylight"?"happy":"bad");return true;
+ }
+ if(storyStage>=18){const route=storyRouteScore>0?"Daylight":"just friends";showStorySearchResult("Semua bab sudah selesai",`Kata kunci utama hasil pilihanmu adalah <b>${route}</b>. Ketik kata kunci itu untuk membuka ending.`);return true;}
+ const r=storyRiddles[storyStage];
+ if(r.answer.some(a=>normalizeStoryAnswer(a)===q)){
+  showStorySearchResult("Jawaban benar ✨",r.success);
+  showStoryChoice();
+  return true;
+ }
+ showStorySearchResult("Belum cocok","Buka tab <b>Petunjuk</b> untuk melihat aplikasi yang harus dibuka, benda/detail yang dicari, dan apa yang perlu kamu ketik. Jawaban tidak perlu memakai huruf kapital.");
+ return true;
+}
 function triggerStoryCall(kind){if(!$('incoming-call'))return;callKind=kind;const caller=kind==="gaska"?"Gaska":"Sera";$("call-caller").textContent=caller;$("call-avatar").textContent=caller==="Sera"?"S":"G";$("call-subtitle").textContent="iPhone · Panggilan suara masuk";$("call-actions").style.display="flex";$("call-dialogue").style.display="none";$("call-ringing").style.display="flex";$("incoming-call").classList.add("show");$("incoming-call").setAttribute("aria-hidden","false");if(navigator.vibrate){try{navigator.vibrate([180,100,180,100,280]);}catch(e){}}}
 function callScript(kind){if(kind==="gaska")return{lines:[["from","Gaska: Sera, aku nemu dua tempat yang kamu simpan. Kamu serius pernah membayangkan tinggal sejauh itu?"],["from","Aku cuma mau memastikan… kamu baik-baik aja, kan?"]],choices:[["Aku baik kok. Cuma pengin tahu kalau kamu juga masih ingat hal-hal kecil itu.","Iya, aku ingat. Aku cuma nggak tahu harus bilang apa."],["Kenapa kamu simpan Swiss dan Edinburgh?","Karena kita pernah ngomongin itu sambil minum kopi, ingat?"]]};if(kind==="sera2")return{lines:[["from","Sera: Gaska, satu petunjuk lagi. Kalau kamu lupa jawabannya, nggak apa-apa. Aku cuma mau tahu apa kamu masih ingat hal paling konyol yang pernah aku bilang."]],choices:[["Kamu mau jadi pasangan bebek 😭","Sera: cita-cita kamu memang nggak ada lawan."],["Aku lupa, kasih petunjuk lagi dong.","Sera: Hewan yang suka jalan berdua dan bilang wek wek!"]]};return{lines:[["from","Sera: halo? kamu masih di sana? Aku baru sadar semua petunjuk ini kedengarannya seperti ujian."],["from","Padahal aku cuma pengin tahu, dari semua hal yang kamu ingat tentang aku… mana yang paling kamu simpan?"]],choices:[["Aku ingat banyak hal. Aku cuma nggak tahu mana yang harus disebut dulu.","Sera: itu jawaban yang cukup adil, sih. 😭"],["Kamu sendiri, kenapa repot-repot bikin semua ini?","Sera: karena ada hal yang susah dibilang langsung. Jadi aku bikin kamu jalan sedikit lebih jauh."]]};}
 function addCallLine(side,text){const lines=$("call-lines");const div=document.createElement("div");div.className="call-line "+side;div.textContent=text;lines.appendChild(div);lines.scrollTop=lines.scrollHeight;}
