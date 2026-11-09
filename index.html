@@ -1,4 +1,3 @@
-
 <!--
 CODEPEN SETUP:
 Tempel seluruh file ini ke kolom HTML CodePen. CSS dan JavaScript sudah termasuk.
@@ -797,6 +796,9 @@ Tempel seluruh file ini ke kolom HTML CodePen. CSS dan JavaScript sudah termasuk
 .sf-fb.ok{color:#1fa347;font-weight:600}.sf-fb.bad{color:#d93025;font-weight:600}
 .sf-bar{padding-bottom:max(26px,env(safe-area-inset-bottom))}
 @media (max-width:599px){ .phone{height:100%;height:100dvh!important} }
+
+.music-note{font-size:12px;line-height:1.5;color:#7a3b4f;background:#fff0f4;border-radius:12px;padding:10px 12px;margin-top:10px}
+.music-note a{color:#c2185b;font-weight:600;text-decoration:none;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -1307,7 +1309,7 @@ function playSeraTrack(i,auto){
   if(auto&&slot.querySelector("iframe")){ ytSend("loadVideoById",[t.id]); }
   else{
     const origin=(location.origin&&location.origin!=="null")?"&origin="+encodeURIComponent(location.origin):"";
-    slot.innerHTML=`<iframe class="music-player" title="${t.title} — ${t.artist}" src="https://www.youtube-nocookie.com/embed/${t.id}?autoplay=1&rel=0&playsinline=1&enablejsapi=1${origin}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+    slot.innerHTML=`<iframe class="music-player" title="${t.title} — ${t.artist}" src="https://www.youtube-nocookie.com/embed/${t.id}?autoplay=1&rel=0&playsinline=1&enablejsapi=1${origin}" allow="autoplay; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
     const f=slot.querySelector("iframe");
     f.addEventListener("load",()=>{ try{ f.contentWindow.postMessage(JSON.stringify({event:"listening",id:1,channel:"widget"}),"*"); }catch(e){} });
   }
@@ -1397,6 +1399,7 @@ function scheduleTelegramNotification(){
     pushNotif({id:"telegram",app:"telegram",who:"find me brou",msg:"kalau sudah berhasil buka kabari ya",when:"sekarang"});
     if(!$("notif-center").classList.contains("open")) banner.classList.add("show");
     if (navigator.vibrate) { try { navigator.vibrate([180, 90, 180]); } catch(e) {} }
+    if(window.notifSound)notifSound("Telegram");
     if ("Notification" in window && Notification.permission === "granted") {
       try { const n = new Notification("Telegram · find me brou", { body: "kalau sudah berhasil buka kabari ya", tag: "sera-telegram" }); n.onclick = ()=>{ window.focus(); openTelegramFromBanner(); n.close(); }; } catch(e) {}
     }
@@ -1810,10 +1813,17 @@ syncAppState();
    e.preventDefault();const message=$("safari-feedback").value.trim();if(!message)return;
    const mailSubject=encodeURIComponent(subject);
    const mailBody=encodeURIComponent("Ending: "+(happy?"HAPPY":"YAHH")+"\n\nPesan dan kesan:\n"+message);
-   window.location.href="mailto:elzskive@gmail.com?subject="+mailSubject+"&body="+mailBody;
+   const _bt="Ending: "+(happy?"HAPPY":"YAHH")+"\n\nPesan dan kesan:\n"+message;
+   const _btn=$("safari-feedback-form").querySelector("button"); if(_btn){_btn.disabled=true;_btn.textContent="Mengirim…";}
+   const _after=(res)=>{
+    if(!res||!res.ok){ window.location.href="mailto:elzskive@gmail.com?subject="+mailSubject+"&body="+encodeURIComponent(_bt); }
+    
    giftSent=true;
    $("safari-game-content").innerHTML=`<div class="safari-result"><div class="safari-placeholder">${driveLabel}<br><small>Gambar sementara · ketuk untuk membuka hadiah</small></div><p style="font-size:13px;line-height:1.6;color:#666;text-align:center">Link hadiah akan ditambahkan nanti.</p><a href="#" class="safari-gift-link" id="safari-gift-placeholder"><div class="safari-placeholder" style="height:105px;margin-top:8px">KLIK UNTUK MEMBUKA HADIAH 🎁</div></a></div>`;
    $("safari-gift-placeholder").addEventListener("click",e=>{e.preventDefault();toast("Link Google Drive untuk ending ini akan ditambahkan setelah kamu mengirimkan tautannya.");});
+    toast(res&&res.ok?"Pesan terkirim 💌":"Membuka aplikasi email…");
+   };
+   (window.sendFeedbackMail?window.sendFeedbackMail(subject,_bt,happy?"HAPPY":"YAHH"):Promise.resolve({ok:false})).then(_after,()=>_after({ok:false}));
   });
  }
  window.renderSafariGame=renderSafariGame;
@@ -2286,7 +2296,7 @@ function renderSettingsApp(root,page){
   const re=()=>{ const sp=root.scrollTop; renderSettingsApp(root,stPage); root.scrollTop=sp; };
   $$("[data-go]",root).forEach(r=>{ if(r.dataset.go)r.addEventListener("click",()=>renderSettingsApp(root,r.dataset.go)); });
   $$("[data-sw]",root).forEach(s=>s.addEventListener("click",e=>{ e.stopPropagation(); const k=s.dataset.sw; ST[k]=!ST[k]; buzz(10); if(k==="air")applyAirplane(); if(typeof ccSync==="function")ccSync(); re(); }));
-  $$("[data-cyc]",root).forEach(r=>r.addEventListener("click",()=>{ ST[r.dataset.cyc]=(ST[r.dataset.cyc]+1)%(+r.dataset.n); buzz(8); re(); }));
+  $$("[data-cyc]",root).forEach(r=>r.addEventListener("click",()=>{ ST[r.dataset.cyc]=(ST[r.dataset.cyc]+1)%(+r.dataset.n); buzz(8); if(typeof settingsPreview==="function")settingsPreview(r.dataset.cyc); re(); }));
   $$("[data-ck]",root).forEach(r=>r.addEventListener("click",()=>{ ST[r.dataset.ck]=r.dataset.val; buzz(8); re(); }));
   $$("[data-sl]",root).forEach(s=>s.addEventListener("input",()=>{ ST[s.dataset.sl]=+s.value; if(s.dataset.sl==="bright"){ applyBright(); if(typeof ccSync==="function")ccSync(); } }));
   $$("[data-wall]",root).forEach(w=>w.addEventListener("click",()=>{ const o=WALLS.find(x=>x.id===w.dataset.wall); ST.wall=o.id; $$(".wall").forEach(el=>{ el.style.background=o.c||""; if(o.c)el.style.backgroundSize="cover"; }); buzz(10); re(); }));
@@ -2580,7 +2590,7 @@ function openGameChat(name){
   window.showGameBanner=function(ev){
     cur=ev; b.innerHTML=''; b.appendChild(iconEl("pesan"));
     const c=document.createElement("div"); c.className="banner-copy"; c.innerHTML='<div class="banner-head"><span>Pesan · '+ev.who+'</span><span class="banner-time">sekarang</span></div><div class="banner-text">'+ev.msg+'</div>'; b.appendChild(c);
-    b.classList.add("show"); clearTimeout(tm); tm=setTimeout(()=>b.classList.remove("show"),5200); buzz(30);
+    b.classList.add("show"); clearTimeout(tm); tm=setTimeout(()=>b.classList.remove("show"),5200); if(window.notifSound)notifSound("Pesan");
   };
   b.addEventListener("click",()=>{ b.classList.remove("show"); if(cur)openGameChat(cur.chat); });
   window.gameEvent=function(id){
@@ -2608,6 +2618,133 @@ function openGameChat(name){
     if(e.key==="Enter"||e.keyCode===13){ e.preventDefault(); send(); }
   });
 })();
+
+/* ================= v24 · nada notifikasi, email otomatis, musik ================= */
+
+/* ---------- 1. Nada notifikasi (suara sintetis, tanpa file audio) ---------- */
+const NS={ctx:null};
+function nsCtx(){
+  if(NS.ctx)return NS.ctx;
+  const AC=window.AudioContext||window.webkitAudioContext; if(!AC)return null;
+  try{ NS.ctx=new AC(); }catch(e){ NS.ctx=null; }
+  return NS.ctx;
+}
+/* buka kunci audio pada sentuhan pertama (aturan autoplay browser) */
+["pointerdown","touchstart","keydown","click"].forEach(ev=>document.addEventListener(ev,()=>{ const c=nsCtx(); if(c&&c.state==="suspended")c.resume(); },{passive:true,capture:true}));
+const TONES={
+ Note:[[1318.5,0,.16,"sine",.5],[1760,.11,.3,"sine",.45]],
+ Aurora:[[784,0,.28,"sine",.4],[988,.1,.28,"sine",.4],[1318.5,.2,.45,"sine",.4]],
+ Bamboo:[[880,0,.12,"triangle",.55],[1320,.08,.18,"triangle",.45]],
+ Chord:[[1046.5,0,.75,"sine",.28],[1318.5,0,.75,"sine",.28],[1568,0,.75,"sine",.28]],
+ Pop:[[1568,0,.09,"sine",.5],[1174.7,.08,.22,"sine",.45]],
+ Reflection:[[659,0,.3,"sine",.35],[784,.22,.3,"sine",.35],[988,.44,.3,"sine",.35],[784,.66,.3,"sine",.35],[1318,.88,.5,"sine",.35]],
+ Apex:[[523,0,.2,"triangle",.4],[659,.16,.2,"triangle",.4],[784,.32,.2,"triangle",.4],[1046,.48,.5,"triangle",.4]],
+ Beacon:[[880,0,.25,"sine",.4],[880,.4,.25,"sine",.4],[1175,.8,.5,"sine",.4]],
+ Chimes:[[1568,0,.5,"sine",.3],[1318,.18,.5,"sine",.3],[1046,.36,.7,"sine",.3]]
+};
+function playTone(name,scale){
+  const c=nsCtx(); const def=TONES[name]; if(!c||!def)return false;
+  if(c.state==="suspended")c.resume();
+  const vol=(scale==null?1:scale), t0=c.currentTime+.02;
+  def.forEach(n=>{
+    [[1,1],[2,.18]].forEach(h=>{
+      const o=c.createOscillator(), g=c.createGain();
+      o.type=n[3]; o.frequency.value=n[0]*h[0];
+      const peak=n[4]*h[1]*vol, s=t0+n[1];
+      g.gain.setValueAtTime(0.0001,s); g.gain.exponentialRampToValueAtTime(Math.max(peak,0.0002),s+.012); g.gain.exponentialRampToValueAtTime(0.0001,s+n[2]);
+      o.connect(g); g.connect(c.destination); o.start(s); o.stop(s+n[2]+.05);
+    });
+  });
+  return true;
+}
+const NS_APP_TONE={"Pesan":()=>["Note","Aurora","Bamboo","Chord"][(ST["v_Nada Teks"]||0)%4],"Telegram":()=>"Pop","Telepon":()=>"Chimes"};
+function nsAllowed(app){
+  if(ST.cc_focus||ST["v_Jangan Ganggu"]===1)return false;        /* Fokus / Jangan Ganggu */
+  if(ST.vol===0)return false;
+  const row=(ST_GEN.notif.g[1].r||[]).find(r=>r[0]===app);
+  if(row){ const o=row[2], v=o[(ST["v_"+app]||0)%o.length]; return /Suara/.test(v)&&!/Tanpa/.test(v); }
+  return true;
+}
+window.notifSound=function(app){
+  try{
+    if(ST.hap!==false&&navigator.vibrate){ try{ navigator.vibrate([120,60,120]); }catch(e){} }
+    if(!nsAllowed(app))return;
+    const nm=(NS_APP_TONE[app]||(()=>"Note"))();
+    playTone(nm,.35+.65*((ST.vol==null?60:ST.vol)/100));
+  }catch(e){}
+};
+window.settingsPreview=function(key){
+  const v=ST[key]||0;
+  if(key==="v_Nada Teks")playTone(["Note","Aurora","Bamboo","Chord"][v%4],.35+.65*((ST.vol==null?60:ST.vol)/100));
+  if(key==="v_Nada Dering")playTone(["Reflection","Apex","Beacon","Chimes"][v%4],.35+.65*((ST.vol==null?60:ST.vol)/100));
+};
+
+/* ---------- 2. Kirim pesan ending tanpa membuka Gmail ---------- */
+/* Tempel URL Web App Google Apps Script (atau endpoint form lain) di bawah ini.
+   Kosong = pakai cara lama (membuka aplikasi email). */
+window.FEEDBACK_ENDPOINT="https://script.google.com/macros/s/AKfycbxGCdbq3Xhr0vY0AvlM_cBmU9e7bbbGJzwJmHO1GefetBRv1I8lambB76whX27lhxvz/exec";
+window.sendFeedbackMail=function(subject,message,ending){
+  const url=window.FEEDBACK_ENDPOINT||"";
+  if(!url)return Promise.resolve({ok:false,reason:"no-endpoint"});
+  const body=new URLSearchParams({subject:subject,message:message,ending:ending||"",time:new Date().toISOString(),website:""}).toString();
+  const ctl=("AbortController" in window)?new AbortController():null; const to=setTimeout(()=>{ if(ctl)ctl.abort(); },12000);
+  return fetch(url,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},body:body,signal:ctl?ctl.signal:undefined})
+    .then(()=>{ clearTimeout(to); return {ok:true}; }).catch(e=>{ clearTimeout(to); return {ok:false,reason:String(e&&e.message||e)}; });
+};
+
+/* ---------- 3. Musik: file audio, pesan error, ID video yang kembar ---------- */
+/* Isi jika ingin mengganti sumber lagu. Contoh:
+   window.SERA_MUSIC_FIX={ "Daylight":{file:"music/daylight.mp3"}, "Dunia Tipu-Tipu":{id:"ID_YOUTUBE_YANG_BENAR"} }; */
+window.SERA_MUSIC_FIX=window.SERA_MUSIC_FIX||{};
+(function(){
+  seraMusic.forEach(t=>{ const f=window.SERA_MUSIC_FIX[t.title]; if(f)Object.assign(t,f); });
+  const seen={}; seraMusic.forEach(t=>{ if(t.file||!t.id)return; if(seen[t.id])t.noid=true; else seen[t.id]=t.title; });
+})();
+function musicNote(t,kind,code){
+  const host=document.querySelector(".music-now"); if(!host)return;
+  let n=document.getElementById("music-note"); if(!n){ n=document.createElement("div"); n.id="music-note"; n.className="music-note"; host.appendChild(n); }
+  const q=encodeURIComponent(t.title+" "+t.artist);
+  const link=(t.id&&kind!=="noid")?"https://www.youtube.com/watch?v="+t.id:"https://www.youtube.com/results?search_query="+q;
+  const msg=kind==="noid"?"Link YouTube untuk lagu ini belum ditambahkan, jadi belum bisa diputar di sini."
+   :kind==="filefail"?"File audio lagu ini tidak ditemukan."
+   :(code===101||code===150)?"Pemilik video tidak mengizinkan lagu ini diputar di halaman lain."
+   :(code===100)?"Video lagu ini sudah tidak tersedia."
+   :"YouTube menolak memutar video di halaman ini"+(code?" (kode "+code+")":"")+". Biasanya karena halaman dibuka dari file lokal; buka lewat alamat https agar bisa.";
+  n.innerHTML=msg+' <a href="'+link+'" target="_blank" rel="noopener">Buka di YouTube ↗</a>';
+}
+function musicNoteClear(){ const n=document.getElementById("music-note"); if(n)n.remove(); }
+const _playYT=playSeraTrack;
+playSeraTrack=function(i,auto){
+  const t=seraMusic[i], slot=document.getElementById("music-player-slot"); if(!t||!slot)return;
+  musicNoteClear();
+  if(t.file){
+    seraTrack=i; seraPlaying=true;
+    slot.innerHTML='<audio id="music-audio" controls playsinline preload="auto" style="width:100%;display:block"></audio>';
+    const a=slot.firstChild; a.src=t.file;
+    a.addEventListener("play",()=>{ seraPlaying=true; syncMusicUI(); });
+    a.addEventListener("pause",()=>{ seraPlaying=false; syncMusicUI(); });
+    a.addEventListener("ended",()=>{ playSeraTrack((seraTrack+1)%seraMusic.length,true); });
+    a.addEventListener("error",()=>{ seraPlaying=false; musicNote(t,"filefail"); syncMusicUI(); });
+    const p=a.play(); if(p&&p.catch)p.catch(()=>{ seraPlaying=false; syncMusicUI(); });
+    syncMusicUI(); return;
+  }
+  if(t.noid||!t.id){
+    seraTrack=i; seraPlaying=false; slot.innerHTML='<div class="music-idle">♫</div>'; musicNote(t,"noid"); syncMusicUI(); return;
+  }
+  if(slot.querySelector("audio"))slot.innerHTML='<div class="music-idle">♫</div>';
+  _playYT(i,auto);
+};
+const _ytSend=ytSend;
+ytSend=function(func,args){
+  const a=document.querySelector("#music-player-slot audio");
+  if(a){ if(func==="pauseVideo")a.pause(); else if(func==="playVideo")a.play(); return; }
+  return _ytSend.apply(this,arguments);
+};
+window.addEventListener("message",e=>{
+  const f=document.querySelector("#music-player-slot iframe"); if(!f||e.source!==f.contentWindow)return;
+  let d=e.data; if(typeof d==="string"){ try{ d=JSON.parse(d); }catch(_){ return; } }
+  if(d&&d.event==="onError"){ const t=seraMusic[seraTrack]; if(t){ seraPlaying=false; musicNote(t,"yterr",Number(d.info)); syncMusicUI(); } }
+});
 
 </script>
 </body>
