@@ -825,6 +825,24 @@ html.dark .music-idle{filter:invert(1) hue-rotate(180deg)}
 .safari-video{margin:0 0 14px}
 .safari-video video{width:100%;aspect-ratio:16/9;border-radius:14px;background:#000;display:block}
 .safari-video-err{margin-top:8px;font-size:12px;line-height:1.5;color:#b3261e;background:#fdecea;border-radius:10px;padding:8px 10px}
+
+.safari-gift{text-align:center}
+.gift-badge{font-size:46px;line-height:1.1;margin:2px 0;animation:giftFloat 3s ease-in-out infinite}
+.safari-gift h2{margin:6px 0 4px}
+.gift-sub{font-size:14px;line-height:1.65;color:#5b5f6a;margin:6px 4px 18px}
+.gift-list{display:grid;gap:12px;margin-bottom:12px}
+.gift-btn{display:flex;align-items:center;gap:14px;padding:15px 16px;border-radius:22px;color:#fff;text-decoration:none;text-align:left;position:relative;overflow:hidden;box-shadow:0 12px 26px -12px rgba(150,60,170,.75);transition:transform .15s,box-shadow .15s;-webkit-tap-highlight-color:transparent}
+.gift-btn::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.38) 50%,transparent 70%);transform:translateX(-120%);animation:giftShine 3.6s ease-in-out infinite;pointer-events:none}
+.gift-btn:active{transform:scale(.97);box-shadow:0 6px 16px -10px rgba(150,60,170,.8)}
+.g-pink{background:linear-gradient(135deg,#ff7aa2 0%,#d65cc7 55%,#9b5cf0 100%)}
+.g-blue{background:linear-gradient(135deg,#5ac8fa 0%,#4f8cff 55%,#7a5cff 100%)}
+.gift-ic{width:48px;height:48px;border-radius:15px;background:rgba(255,255,255,.26);display:grid;place-items:center;font-size:25px;flex-shrink:0;box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
+.gift-tx b{display:block;font-size:16.5px;font-weight:700;letter-spacing:-.2px}
+.gift-tx small{display:block;font-size:12px;opacity:.92;margin-top:2px}
+.gift-go{margin-left:auto;font-size:30px;line-height:1;opacity:.95}
+@keyframes giftShine{0%,55%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
+@keyframes giftFloat{50%{transform:translateY(-5px)}}
+html.dark .gift-btn{filter:invert(1) hue-rotate(180deg)}
 </style>
 </head>
 <body>
@@ -1751,7 +1769,7 @@ syncAppState();
   $("safari-game-form").addEventListener("submit",submitKeyword);
   renderMemories();
   if(endingChoice&&giftSent){
-   $("safari-game-content").innerHTML='<div class="safari-result"><div class="safari-result-letter">Kamu sudah sampai di akhir cerita ini 🤍 Terima kasih sudah memainkannya sampai selesai.</div><button class="safari-send" type="button" id="safari-restart">Main lagi dari awal</button></div>';
+   $("safari-game-content").innerHTML=giftHtml(endingChoice==="happy")+'<button class="safari-send" type="button" id="safari-restart" style="margin-top:14px">Main lagi dari awal</button>';
    $("safari-restart").addEventListener("click",()=>{ if(confirm("Mulai dari awal? Kemajuan sebelumnya akan dihapus."))window.seraReset(); });
   }
   else if(endingChoice)renderEnding(endingChoice);
@@ -1863,6 +1881,23 @@ syncAppState();
   if(value!==finalWord){toast("Kata kunci terakhir belum tepat.");return}
   renderEnding(finalWord);
  }
+ const GIFT_LINKS={
+  happy:[
+   {href:"https://moreyears.my.canva.site/",ic:"✨",t:"Buka halaman spesial",s:"Dibuat khusus untukmu",cls:"g-pink"},
+   {href:"https://drive.google.com/file/d/1L1TphKDI35g5MS9foXde6jj0EKaT9nSV/view?usp=drivesdk",ic:"🎁",t:"Buka hadiah kecilnya",s:"Tersimpan di Google Drive",cls:"g-blue"}
+  ],
+  yahh:[
+   {href:"https://drive.google.com/file/d/1H21Tf0xI8GUhufSSlwONFYje394VrYNb/view?usp=drivesdk",ic:"🎁",t:"Buka hadiah kecilnya",s:"Tersimpan di Google Drive",cls:"g-blue"}
+  ]};
+ function giftHtml(happy){
+  const L=GIFT_LINKS[happy?"happy":"yahh"];
+  const head=happy?"Hadiah happy ending-mu sudah terbuka! 🎉":"Hadiah kecil untukmu 🎁";
+  const sub=happy
+   ?"Makasihh yaa sudah menulis pesannya 💌 Ini dua hadiah kecil dari aku, tinggal diketuk. Semoga kamu happy happy, selalu."
+   :"Makasihh yaa sudah menulis pesannya 💌 Walaupun endingnya yahh, kamu tetap sudah sampai sejauh ini dan itu keren. Ini hadiah kecil dari aku.";
+  return '<div class="safari-result safari-gift"><div class="gift-badge">🎁</div><h2>'+head+'</h2><p class="gift-sub">'+sub+'</p><div class="gift-list">'+L.map(l=>'<a class="gift-btn '+l.cls+'" href="'+l.href+'" target="_blank" rel="noopener noreferrer"><span class="gift-ic">'+l.ic+'</span><span class="gift-tx"><b>'+l.t+'</b><small>'+l.s+'</small></span><span class="gift-go">›</span></a>').join("")+'</div><div class="safari-game-status">Link terbuka di tab baru.</div></div>';
+ }
+
  function renderEnding(which){
   endingChoice=which; saveGame();
   const happy=which==="happy";
@@ -1884,8 +1919,7 @@ syncAppState();
     if(!res||!res.ok){ window.location.href="mailto:elzskive@gmail.com?subject="+mailSubject+"&body="+encodeURIComponent(_bt); }
     
    giftSent=true;saveGame();
-   $("safari-game-content").innerHTML=`<div class="safari-result"><div class="safari-placeholder">${driveLabel}<br><small>Gambar sementara · ketuk untuk membuka hadiah</small></div><p style="font-size:13px;line-height:1.6;color:#666;text-align:center">Link hadiah akan ditambahkan nanti.</p><a href="#" class="safari-gift-link" id="safari-gift-placeholder"><div class="safari-placeholder" style="height:105px;margin-top:8px">KLIK UNTUK MEMBUKA HADIAH 🎁</div></a></div>`;
-   $("safari-gift-placeholder").addEventListener("click",e=>{e.preventDefault();toast("Link Google Drive untuk ending ini akan ditambahkan setelah kamu mengirimkan tautannya.");});
+   $("safari-game-content").innerHTML=giftHtml(happy); fb("Selesai! Hadiahmu sudah terbuka 🎁","ok"); { const _gc=$("safari-game-content"); if(_gc&&_gc.scrollIntoView)_gc.scrollIntoView({block:"start",behavior:"smooth"}); }
     toast(res&&res.ok?"Pesan terkirim 💌":"Gagal mengirim otomatis. Membuka aplikasi email…");
     { const _st=document.createElement("p"); _st.className="safari-help-text"; _st.style.display="block"; _st.textContent=(res&&res.ok)?"✓ Pesanmu sudah terkirim ke email.":"Pesan belum terkirim otomatis, jadi aplikasi email dibuka agar kamu bisa mengirimnya manual."; const _p=$("safari-game-content").firstElementChild; if(_p)_p.appendChild(_st); }
     { const _rb=document.createElement("button"); _rb.type="button"; _rb.className="safari-send"; _rb.style.marginTop="12px"; _rb.textContent="Main lagi dari awal"; _rb.addEventListener("click",()=>{ if(confirm("Mulai dari awal? Kemajuan sebelumnya akan dihapus."))window.seraReset(); }); const _p2=$("safari-game-content").firstElementChild; if(_p2)_p2.appendChild(_rb); }
